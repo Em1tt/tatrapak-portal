@@ -1,2 +1,1 @@
-# tatrapak-portal
-Informačný systém Tatrapak
+webový portál + databáza pre zadávanie objednávok do výroby
