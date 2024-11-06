@@ -4,7 +4,11 @@
 	import Icon from './Icon.svelte';
 	import XMark from '$lib/icons/XMark.svelte';
 
-	let { children, open = $bindable(), header }: { children: Snippet; open: boolean, header: Snippet } = $props();
+	let {
+		children,
+		open = $bindable(),
+		header
+	}: { children: Snippet; open: boolean; header: Snippet } = $props();
 
 	onMount(() => {
 		document.addEventListener('click', (e) => {
@@ -37,9 +41,9 @@
 				<h2>
 					{@render header?.()}
 				</h2>
-				<button onclick={() => open = false} class="hover:text-text-light-1">
+				<button onclick={() => (open = false)} class="hover:text-text-light-1">
 					<Icon scale="medium">
-						<XMark/>
+						<XMark />
 					</Icon>
 				</button>
 			</div>

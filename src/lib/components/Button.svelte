@@ -4,12 +4,16 @@
 	let {
 		children,
 		style,
+		textStyle = "default",
+		shrink = true,
 		type = 'button',
 		onclick = () => {},
 		isRelative = false
 	}: {
 		children: Snippet;
 		style: 'primary' | 'secondary' | 'opaque' | 'warning' | 'danger';
+		textStyle?: 'default' | 'primary' | 'secondary' | 'warning' | 'danger';
+		shrink?: boolean,
 		type?: 'button' | 'submit' | 'reset';
 		onclick?: () => void;
 		isRelative?: boolean;
@@ -19,14 +23,19 @@
 	let circle: HTMLDivElement;
 
 	function onmousedown(event: MouseEvent) {
-		const diameter = Math.max(button.clientWidth, button.clientHeight) * 2;
-		const radius = diameter / 2;
+		const diameter = Math.max(button.clientWidth, button.clientHeight) * 2.5;
+        const radius = diameter / 2;
 
-		circle.style.width = circle.style.height = `${diameter}px`;
-		circle.style.left = `${event.clientX - (button.offsetLeft + radius)}px`;
-		circle.style.top = `${event.clientY - (button.offsetTop + radius)}px`;
+        const rect = button.getBoundingClientRect();
+        const offsetX = event.clientX - rect.left;
+        const offsetY = event.clientY - rect.top;
 
-		button.classList.add('animate-boink');
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${offsetX - radius}px`;
+        circle.style.top = `${offsetY - radius}px`;
+		if(shrink){
+			button.classList.add('animate-boink');
+		}
 		circle.classList.add('animate-zoomin');
 	}
 
@@ -35,7 +44,9 @@
 	}
 
 	function onanimationend() {
-		button.classList.remove('animate-boink');
+		if(shrink){
+			button.classList.remove('animate-boink');
+		}
 		circle.classList.remove('animate-zoomin');
 	}
 </script>
@@ -47,17 +58,28 @@
 	{onmousedown}
 	{onmouseup}
 	{onanimationend}
-	class="flex flex-row gap-2 items-center border rounded px-4 py-1.5 text-sm {isRelative ? "absolute" : "relative"} focus:scale-95 duration-150 overflow-hidden
-    {style == 'primary'
-		? 'text-text-dark-1 bg-primary-base hover:bg-primary-light-1 border-primary-dark-1/30'
+	class="flex flex-row gap-2 items-center border rounded px-4 py-1.5 text-sm {isRelative ? "absolute" : "relative"} {shrink ? "focus:scale-95" : ""} duration-150 overflow-hidden
+    {textStyle == 'default' 
+		? 'text-text-dark-1'
+		: textStyle == "primary"
+			? "text-primary-dark-1"
+			: textStyle == "secondary"
+				? "text-secondary-dark-1"
+				: textStyle == "warning"
+					? "text-warning-dark-1"
+					: textStyle == "danger"
+						? "text-danger-dark-1"
+						: ""}
+	{style == 'primary'
+		? 'bg-primary-base hover:bg-primary-light-1 border-primary-dark-1/30'
 		: style == 'secondary'
-			? 'text-text-dark-1 bg-secondary-base hover:bg-secondary-light-1 border-secondary-dark-1/30'
+			? 'bg-secondary-base hover:bg-secondary-light-1 border-secondary-dark-1/30'
 			: style == 'opaque'
-				? 'text-text-dark-1 hover:bg-background-dark-2/50 border-opacity-0'
+				? 'hover:bg-background-dark-2/50 border-opacity-0'
 				: style == 'warning'
-					? 'text-text-dark-1 bg-warning-base hover:bg-warning-light-1 border-warning-dark-1/30'
+					? 'bg-warning-base hover:bg-warning-light-1 border-warning-dark-1/30'
 					: style == 'danger'
-						? 'text-text-dark-1 bg-danger-base hover:bg-danger-light-1 border-danger-dark-1/30'
+						? 'bg-danger-base hover:bg-danger-light-1 border-danger-dark-1/30'
 						: ''}"
 >
 	<div

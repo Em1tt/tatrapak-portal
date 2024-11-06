@@ -1,7 +1,7 @@
 <script>
 	import { applyAction, enhance } from "$app/forms";
 	import Button from "$lib/components/Button.svelte";
-	import TextInput from "$lib/components/inputs/TextInput.svelte";
+	import TextInput from "$lib/components/forms/TextInput.svelte";
 
 	let open = $state(false);
 	
