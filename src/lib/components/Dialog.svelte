@@ -21,7 +21,7 @@
 	<div
 		in:fade
 		out:fade={{ delay: 100 }}
-		class="bg-black/20 backdrop-blur w-screen h-screen fixed top-0 left-0"
+		class="bg-black/20 backdrop-blur w-screen h-screen fixed top-0 left-0 z-40"
 	></div>
 	<div
 		class="fixed top-0 left-0 w-screen h-screen z-50 overflow-auto overflow-x-visible px-4 grid place-items-center"
