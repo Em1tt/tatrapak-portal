@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
-	import Button from './Button.svelte';
 	import Icon from './Icon.svelte';
 	import XMark from '$lib/icons/XMark.svelte';
 
@@ -21,19 +20,19 @@
 	<div
 		in:fade
 		out:fade={{ delay: 100 }}
-		class="bg-black/20 backdrop-blur w-screen h-screen fixed top-0 left-0 z-40"
+		class="fixed top-0 left-0 z-40 w-screen h-screen bg-black/20 backdrop-blur"
 	></div>
 	<div
-		class="fixed top-0 left-0 w-screen h-screen z-50 overflow-auto overflow-x-visible px-4 grid place-items-center"
+		class="fixed top-0 left-0 z-50 grid w-screen h-screen px-4 overflow-auto overflow-x-visible place-items-center"
 		id="backdrop"
 	>
 		<div
 			in:fly={{ y: 30, delay: 100 }}
 			out:fly={{ y: 30 }}
-			class="mx-auto my-12 bg-background-light-1 max-w-2xl block rounded w-full"
+			class="block w-full max-w-2xl mx-auto my-12 rounded bg-background-light-1"
 		>
 			<div
-				class="w-full p-2 border-b border-b-background-dark-1 flex flex-auto justify-between items-center text-text-base"
+				class="flex items-center justify-between flex-auto w-full px-4 py-2 border-b border-b-background-dark-1 text-text-base"
 			>
 				<h2>
 					{@render header?.()}

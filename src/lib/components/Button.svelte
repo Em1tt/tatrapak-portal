@@ -4,10 +4,16 @@
 	let {
 		children,
 		style,
-        type = "button",
-        onclick = () => {}
-	}: { children: Snippet; style: 'primary' | 'secondary' | 'opaque' | 'warning' | 'danger'; type?: "button" | "submit" | "reset", onclick?: () => void } =
-		$props();
+		type = 'button',
+		onclick = () => {},
+		isRelative = false
+	}: {
+		children: Snippet;
+		style: 'primary' | 'secondary' | 'opaque' | 'warning' | 'danger';
+		type?: 'button' | 'submit' | 'reset';
+		onclick?: () => void;
+		isRelative?: boolean;
+	} = $props();
 
 	let button: HTMLButtonElement;
 	let circle: HTMLDivElement;
@@ -24,9 +30,9 @@
 		circle.classList.add('animate-zoomin');
 	}
 
-    function onmouseup(){
-        button.blur();
-    }
+	function onmouseup() {
+		button.blur();
+	}
 
 	function onanimationend() {
 		button.classList.remove('animate-boink');
@@ -35,13 +41,13 @@
 </script>
 
 <button
-    {type}
-    {onclick}
+	{type}
+	{onclick}
 	bind:this={button}
 	{onmousedown}
-    {onmouseup}
+	{onmouseup}
 	{onanimationend}
-	class="relative flex flex-row gap-2 items-center duration-150 border rounded px-4 focus:scale-95 py-1.5 text-sm overflow-hidden
+	class="flex flex-row gap-2 items-center border rounded px-4 py-1.5 text-sm {isRelative ? "absolute" : "relative"} focus:scale-95 duration-150 overflow-hidden
     {style == 'primary'
 		? 'text-text-dark-1 bg-primary-base hover:bg-primary-light-1 border-primary-dark-1/30'
 		: style == 'secondary'
@@ -52,7 +58,7 @@
 					? 'text-text-dark-1 bg-warning-base hover:bg-warning-light-1 border-warning-dark-1/30'
 					: style == 'danger'
 						? 'text-text-dark-1 bg-danger-base hover:bg-danger-light-1 border-danger-dark-1/30'
-						: 'text-text-dark-1 bg-info-base hover:bg-info-light-1 border-info-dark-1/30'}"
+						: ''}"
 >
 	<div
 		bind:this={circle}

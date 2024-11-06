@@ -1,4 +1,4 @@
-export async function load({request, cookies, locals}){
+export async function load({ cookies }){
     const theme = cookies.get("theme");
     return {
         theme: theme || "light"
