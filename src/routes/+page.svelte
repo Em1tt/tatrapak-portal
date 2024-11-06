@@ -1,11 +1,19 @@
 <script>
+	import Button from "$lib/components/Button.svelte";
+import Dialog from "$lib/components/Dialog.svelte";
+	import Icon from "$lib/components/Icon.svelte";
+	import Login from "$lib/icons/Login.svelte";
 
-	import { enhance } from "$app/forms";
-
+	let open = $state(false);
+	
 </script>
-<h1 class="text-primary">Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
-<form action="?/theme" method="post" use:enhance>
-    <input type="text" name="theme" id="theme">
-    <button type="submit">Submit</button>
-</form>
+
+<Button style="primary" onclick={() => {
+	open = true;
+}}>
+	Test
+</Button>
+
+<div class="mx-auto max-w-7xl px-20 grid grid-cols-12">
+
+</div>
