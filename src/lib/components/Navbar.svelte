@@ -11,10 +11,11 @@
 	import ChevronUp from '$lib/icons/ChevronUp.svelte';
 	import Label from './forms/Label.svelte';
 	import Logout from '$lib/icons/Logout.svelte';
+	import Anchor from './Anchor.svelte';
 
 	let open = $state(false);
 
-	let authenticated = true;
+	let authenticated = false;
 
 	onMount(() => {
 		document.addEventListener('click', (e) => {
@@ -26,51 +27,56 @@
 </script>
 
 <div
-	class="flex flex-col w-full border border-b-background-dark-1 bg-background fixed top-0 left-0"
+	class="flex flex-col w-full border border-b-border-base bg-background fixed top-0 left-0"
 >
-	<div class="flex flex-row items-center justify-between w-full px-2 py-1 mx-auto max-w-7xl">
-		<a href="/">
-			<img src="/tatrapak.png" alt="Tatrapak logo" width="120" />
-		</a>
-		{#if authenticated}
-			<Dropdown id="user">
-				{#snippet button(name = 'user')}
-					<Button
-						style="opaque"
-						onclick={() => ($dropDown == name ? dropDown.set('') : dropDown.set(name))}
-					>
-						<img src={getAvatar('Richard Marcinčák')} width="40" alt="User initials" />
-						<div class="flex flex-col flex-nowrap justify-center items-start gap-0 leading-tight">
-							<p class="text-text-base text-sm leading-tight">Richard Marcinčák</p>
-							<p class="text-text-light-2 text-xs leading-tight">Obchoďák</p>
-						</div>
-						<div class="text-text-light-2">
+	<div class="w-full border-b border-b-border-base">
+		<div class="flex flex-row items-center justify-between w-full px-2 py-1 mx-auto max-w-7xl">
+			<a href="/">
+				<img src="/tatrapak.png" alt="Tatrapak logo" width="120" />
+			</a>
+			{#if authenticated}
+				<Dropdown id="user">
+					{#snippet button(name = 'user')}
+						<Button
+							style="opaque"
+							onclick={() => ($dropDown == name ? dropDown.set('') : dropDown.set(name))}
+						>
+							<img src={getAvatar('Richard Marcinčák')} width="40" alt="User initials" />
+							<div class="flex flex-col flex-nowrap justify-center items-start gap-0 leading-tight">
+								<p class="text-text-base text-sm leading-tight">Richard Marcinčák</p>
+								<p class="text-text-light-2 text-xs leading-tight">Obchoďák</p>
+							</div>
+							<div class="text-text-light-2">
+								<Icon scale="small">
+									{#if $dropDown == name}
+										<ChevronUp />
+									{:else}
+										<ChevronDown />
+									{/if}
+								</Icon>
+							</div>
+						</Button>
+					{/snippet}
+					<div class="flex flex-col">
+						<Button style="opaque" textStyle="danger" shrink={false}>
 							<Icon scale="small">
-								{#if $dropDown == name}
-									<ChevronUp />
-								{:else}
-									<ChevronDown />
-								{/if}
-							</Icon>
-						</div>
-					</Button>
-				{/snippet}
-				<div class="flex flex-col">
-					<Button style="opaque">
-						Odhlásiť sa
-					</Button>
-					<Button style="opaque" textStyle="danger" shrink={false}>
-						<Icon scale="small">
-							<Logout />
-						</Icon> Odhlásiť sa
-					</Button>
-				</div>
-			</Dropdown>
-		{:else}
-			<Button style="primary" onclick={() => (open = true)}>Prihlásiť sa</Button>
-		{/if}
+								<Logout />
+							</Icon> Odhlásiť sa
+						</Button>
+					</div>
+				</Dropdown>
+			{:else}
+				<Button style="primary" onclick={() => (open = true)}>Prihlásiť sa</Button>
+			{/if}
+		</div>
 	</div>
-	<div class="w-full"></div>
+	<div class="w-full bg-background-light-1">
+		<div class="flex flex-row items-center justify-start w-full px-2 py-1 mx-auto max-w-7xl gap-4">
+			<Anchor scale="small" href="/">Domov</Anchor>
+			<Anchor scale="small" href="/objednavky">Objednávky</Anchor>
+			<Anchor scale="small" href="/pouzivatelia">Používatelia</Anchor>
+		</div>
+	</div>
 </div>
 
 {#if !authenticated}

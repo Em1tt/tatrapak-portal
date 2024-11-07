@@ -1,17 +1,17 @@
 <script lang="ts">
-	let {type, placeholder, id, name, error = ""}: {type: "email" | "password" | "text", placeholder?: string, id: string, name: string, error?: string} = $props();
+	let {type, placeholder, id, name, error = "", value = $bindable()}: {type: "email" | "password" | "text", placeholder?: string, id: string, name: string, error?: string, value: string} = $props();
 
 	let input: HTMLInputElement;
 
 	$effect(() => {
 		input.setCustomValidity(error);
-	})
-
+	});
 </script>
 <input
 	onchange={() => {
 		error = "";
 	}}
+	bind:value
 	bind:this={input}
 	{type}
 	{id}

@@ -8,7 +8,7 @@
 <div class="relative dropdown">
     {@render button?.()}
     {#if $dropDown == id}
-    <div class="absolute top-full w-full max-w-80 bg-background border border-border-base rounded-b left-0">
+    <div class="absolute top-full w-full max-w-60 bg-background border border-border-base rounded-b left-0">
         {@render children?.()}
     </div>
     {/if}

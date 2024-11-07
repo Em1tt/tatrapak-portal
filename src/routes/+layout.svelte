@@ -5,7 +5,7 @@ import '../app.css';
 	let { children, data } = $props();
 </script>
 
-<div class="{data.theme} bg-background min-h-screen">
+<div class="{data.theme} bg-background min-h-screen py-20">
 	<Navbar/>
 	{@render children()}
 </div>
