@@ -12,4 +12,12 @@ export function getAvatar(name?: string){
     };
 };
 
+export function isValidEmail(email: string): boolean {
+	return /.+@.+/.test(email);
+}
+
+export const serializeNonPOJOs = (obj: object) => {
+	return JSON.parse(JSON.stringify(obj));
+};
+
 export const dropDown = writable("");
