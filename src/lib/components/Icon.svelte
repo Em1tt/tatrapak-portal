@@ -1,18 +1,20 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { draw } from 'svelte/transition';
 
 	let {
 		scale,
 		isPeer = false,
-		children
-	}: { scale: 'big' | 'medium' | 'small' | 'tiny'; isPeer?: boolean; children: Snippet } = $props();
+		children,
+		stroke = 1.5
+	}: { scale: 'big' | 'medium' | 'small' | 'tiny'; isPeer?: boolean; children: Snippet, stroke?: number } = $props();
 </script>
 
 <svg
 	data-slot="icon"
 	aria-hidden="true"
 	fill="none"
-	stroke-width="1.5"
+	stroke-width={stroke}
 	stroke="currentColor"
 	viewBox="0 0 24 24"
 	xmlns="http://www.w3.org/2000/svg"

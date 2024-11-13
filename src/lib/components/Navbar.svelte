@@ -27,7 +27,7 @@
 </script>
 
 <div
-	class="flex flex-col w-full border border-b-border-base bg-background fixed top-0 left-0"
+	class="flex flex-col w-full border border-b-border-base bg-background fixed top-0 left-0 z-40"
 >
 	<div class="w-full border-b border-b-border-base">
 		<div class="flex flex-row items-center justify-between w-full px-2 py-1 mx-auto max-w-7xl">
