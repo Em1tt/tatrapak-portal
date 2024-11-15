@@ -3,10 +3,11 @@
 import '../app.css';
 
 	let { children, data } = $props();
+	console.log(data);
 </script>
 
 <div class="{data.theme} bg-background min-h-screen py-20">
-	<Navbar/>
+	<Navbar user={data.user}/>
 	{@render children()}
 </div>
 

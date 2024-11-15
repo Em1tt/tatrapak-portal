@@ -37,15 +37,9 @@ export async function POST({ request, locals, getClientAddress }) {
 			status: 400
 		});
 	}
-	const name = formData.get('firstName');
+	const name = formData.get('name');
 	if (!name || typeof name !== 'string') {
 		return new Response('Neplatné meno.', {
-			status: 400
-		});
-	}
-	const surname = formData.get('lastName');
-	if (!surname || typeof surname !== 'string') {
-		return new Response('Neplatné priezvisko.', {
 			status: 400
 		});
 	}
@@ -56,13 +50,13 @@ export async function POST({ request, locals, getClientAddress }) {
 	}
 	
 	const passwordHash = await hashPassword(password);
-	const user = await Pouzivatel.create({
+	await Pouzivatel.create({
 		Email: email,
 		Heslo: passwordHash,
 		Rola: "obchodnik",
 		Meno: name,
-	}).catch(e => {
-        return new Response("Nepodarilo sa vytvoriť používateľa.", {status: 400});
+	}).catch(() => {
+        return new Response("Nepodarilo sa vytvoriť používateľa.", {status: 500});
     });
 
 	return new Response(null, { status: 200 });

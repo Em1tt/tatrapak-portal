@@ -15,9 +15,12 @@
 	import { sineInOut } from 'svelte/easing';
 	import { blur, fly } from 'svelte/transition';
 
+	const { data } = $props();
+	console.log(data);
+
 	let search: string = $state("");
 
-	let data = {
+	let dataa = {
 		orders: [
 			{
 				id: 1,
@@ -402,7 +405,7 @@
 
 	let sortBy = $state('-date');
 
-	let orders = $state(data.orders);
+	let orders = $state(dataa.orders);
 
 	const query = new URLSearchParams($page.url.searchParams.toString());
 
@@ -457,12 +460,13 @@
 	let showCreateOrderDialog = $state(false);
 
 	function updateSearch(){
-		if(!search.trim().length) return orders = data.orders;
+		if(!search.trim().length) return orders = dataa.orders;
 		//Use Recursive Search
-		orders = data.orders.filter((order) => {
+		orders = dataa.orders.filter((order) => {
 			if(recursiveSearch(order, search)) return order;
 		});
 	}
+
 </script>
 
 <div class="grid grid-cols-12 px-2 pt-12 mx-auto max-w-7xl gap-2">
@@ -643,7 +647,7 @@
 						<tr class="hover:bg-background">
 							{#if showTableIndex}
 								<td transition:blur={{duration: 500, easing: sineInOut}} class="px-6 py-4 whitespace-nowrap text-text-light-3">
-									{data.orders.length - index}.
+									{dataa.orders.length - index}.
 								</td>
 							{/if}
 							{#if showTableID}

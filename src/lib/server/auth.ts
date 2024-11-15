@@ -29,9 +29,9 @@ export async function createSession(token: string, userId: number): Promise<Sess
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session = await Session.create({
 		session_id: sessionId,
-		user_id: userId,
 		expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	});
+	await session.setUser(userId);
 	return session;
 }
 
@@ -47,14 +47,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		return { session: null, user: null };
 	}
 
-	const user = await Pouzivatel.findOne({
-		attributes: {
-			exclude: ["Heslo"]
-		},
-		where: {
-			PouzivatelID: session.user_id
-		}
-	});
+	const user = await session.getUser();
 
 	if (!user) {
 		//Something went horribly wrong, maybe the user was deleted and tried to login again with the same session token

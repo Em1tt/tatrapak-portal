@@ -6,18 +6,36 @@
 	import Icon from './Icon.svelte';
 	import { dropDown, getAvatar } from '$lib/util/client';
 	import Dropdown from './Dropdown.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import ChevronDown from '$lib/icons/ChevronDown.svelte';
 	import ChevronUp from '$lib/icons/ChevronUp.svelte';
 	import Label from './forms/Label.svelte';
 	import Logout from '$lib/icons/Logout.svelte';
 	import Anchor from './Anchor.svelte';
+	import { applyAction, enhance } from '$app/forms';
+	import { writable, type Writable } from 'svelte/store';
+	import { invalidateAll } from '$app/navigation';
+	import type { Pouzivatel } from '$lib/server/models';
 
 	let open = $state(false);
 
-	let authenticated = false;
+	let { user }: { user?: Pouzivatel } = $props();
+
+	let loginError: string | unknown = $state('');
+	let validate: Writable<string[]> = writable([]);
+
+	let destroy: (() => void) | undefined;
+
+	onDestroy(() => {
+		destroy?.();
+	});
 
 	onMount(() => {
+		destroy = validate.subscribe((value) => {
+			$validate.forEach((i) => {
+				(document.getElementById(i) as HTMLInputElement).setCustomValidity('Chybné pole');
+			});
+		});
 		document.addEventListener('click', (e) => {
 			if (!(e.target as HTMLDivElement).closest('.dropdown')) {
 				dropDown.set('');
@@ -26,25 +44,28 @@
 	});
 </script>
 
-<div
-	class="flex flex-col w-full border border-b-border-base bg-background fixed top-0 left-0 z-40"
->
+<div class="flex flex-col w-full border border-b-border-base bg-background fixed top-0 left-0 z-40">
 	<div class="w-full border-b border-b-border-base">
 		<div class="flex flex-row items-center justify-between w-full px-2 py-1 mx-auto max-w-7xl">
 			<a href="/">
 				<img src="/tatrapak.png" alt="Tatrapak logo" width="120" />
 			</a>
-			{#if authenticated}
+			{#if user}
 				<Dropdown id="user">
 					{#snippet button(name = 'user')}
 						<Button
 							style="opaque"
 							onclick={() => ($dropDown == name ? dropDown.set('') : dropDown.set(name))}
 						>
-							<img src={getAvatar('Richard Marcinčák')} width="40" alt="User initials" />
+							<img
+								class="rounded overflow-hidden"
+								src={getAvatar(user.Meno)}
+								width="40"
+								alt="User initials"
+							/>
 							<div class="flex flex-col flex-nowrap justify-center items-start gap-0 leading-tight">
-								<p class="text-text-base text-sm leading-tight">Richard Marcinčák</p>
-								<p class="text-text-light-2 text-xs leading-tight">Obchoďák</p>
+								<p class="text-text-base text-sm leading-tight">{user.Meno}</p>
+								<p class="text-text-light-2 text-xs leading-tight">{user.Rola}</p>
 							</div>
 							<div class="text-text-light-2">
 								<Icon scale="small">
@@ -58,11 +79,13 @@
 						</Button>
 					{/snippet}
 					<div class="flex flex-col">
-						<Button style="opaque" textStyle="danger" shrink={false}>
-							<Icon scale="small">
-								<Logout />
-							</Icon> Odhlásiť sa
-						</Button>
+						<form action="/api/auth/signout" method="post" use:enhance class="w-full flex flex-col">
+							<Button type="submit" style="opaque" textStyle="danger" shrink={false}>
+								<Icon scale="small">
+									<Logout />
+								</Icon> Odhlásiť sa
+							</Button>
+						</form>
 					</div>
 				</Dropdown>
 			{:else}
@@ -79,12 +102,30 @@
 	</div>
 </div>
 
-{#if !authenticated}
+{#if !user}
 	<Dialog bind:open>
 		{#snippet header()}
 			Prihlásenie
 		{/snippet}
-		<form>
+		<form
+			method="post"
+			action="/api/auth"
+			use:enhance={() => {
+				return async ({ result }) => {
+					// `result` is an `ActionResult` object
+					if (result.type === 'failure') {
+						loginError = result.data?.message;
+						Array.isArray(result.data?.validate) && validate.set(result.data?.validate);
+						console.error(result);
+						console.log($validate);
+					} else {
+						await invalidateAll();
+						open = false;
+						await applyAction(result);
+					}
+				};
+			}}
+		>
 			<div class="px-4 py-2">
 				<div class="flex flex-col gap-1 py-1">
 					<Label forInput="email">E-Mail</Label>
@@ -95,6 +136,9 @@
 					<TextInput type="password" id="password" name="password" placeholder="Password" />
 				</div>
 			</div>
+			{#if loginError}
+				<div class="px-4 py-2 text-danger-base">{loginError}</div>
+			{/if}
 			<div class="flex justify-between w-full px-4 py-2 border-t border-slate-400/30">
 				<Button onclick={() => (open = false)} type="reset" style="opaque">Zrušiť</Button>
 				<Button type="submit" style="primary">

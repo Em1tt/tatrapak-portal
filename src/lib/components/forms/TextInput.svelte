@@ -4,7 +4,6 @@
 		placeholder,
 		id,
 		name,
-		error = '',
 		onchange = () => {},
 		value = $bindable()
 	}: {
@@ -12,22 +11,21 @@
 		placeholder?: string;
 		id: string;
 		name: string;
-		error?: string;
 		onchange?: () => void;
 		value?: string;
 	} = $props();
 
 	let input: HTMLInputElement;
 
-	$effect(() => {
-		input.setCustomValidity(error);
-	});
+	function removeValidation() {
+		(document.getElementById(id) as HTMLInputElement).setCustomValidity('');
+	}
 </script>
 
 <input
 	onchange={() => {
 		onchange();
-		error = '';
+		removeValidation();
 	}}
 	bind:value
 	bind:this={input}

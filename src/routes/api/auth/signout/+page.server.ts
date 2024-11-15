@@ -16,7 +16,7 @@ export const actions = {
 		if (!locals.session) {
 			return fail(401, { message: 'Nie ste prihlásený.' });
 		}
-		await invalidateSession(locals.session.id);
+		await invalidateSession(locals.session.session_id);
 		deleteSessionTokenCookie(cookies);
 
 		return {};

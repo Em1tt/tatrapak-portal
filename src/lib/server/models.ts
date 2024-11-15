@@ -73,9 +73,12 @@ export class Session extends Model<InferAttributes<Session>, InferCreationAttrib
 	@NotNull
 	declare expires_at: Date;
 
-	@Attribute(DataTypes.INTEGER)
-	@NotNull
-	declare user_id: number;
+	@HasOne(() => Pouzivatel, 'PouzivatelID')
+	declare user_id?: NonAttribute<Pouzivatel>;
+
+	declare getUser: HasOneGetAssociationMixin<Pouzivatel>;
+
+	declare setUser: HasOneSetAssociationMixin<Pouzivatel, Pouzivatel['PouzivatelID']>;
 }
 
 export class Oddelenie extends Model<
@@ -101,6 +104,78 @@ export class Oddelenie extends Model<
 	declare updated_at: CreationOptional<Date>;
 }
 
+@Table({ tableName: 'Objednavky' })
+export class Objednavka extends Model<
+	InferAttributes<Objednavka>,
+	InferCreationAttributes<Objednavka>
+> {
+	@Attribute(DataTypes.INTEGER)
+	@PrimaryKey
+	@AutoIncrement
+	declare ObjednavkaID: CreationOptional<number>;
+
+	@HasOne(() => Zakaznik, 'ZakaznikID')
+	declare ZakaznikID?: NonAttribute<Zakaznik>;
+
+	declare getCustomer: HasOneGetAssociationMixin<Zakaznik>;
+
+	declare setCustomer: HasOneSetAssociationMixin<Zakaznik, Zakaznik['ZakaznikID']>;
+
+	@HasOne(() => Pouzivatel, 'PouzivatelID')
+	declare PouzivatelID?: NonAttribute<Pouzivatel>;
+
+	declare getUser: HasOneGetAssociationMixin<Pouzivatel>;
+
+	declare setUser: HasOneSetAssociationMixin<Pouzivatel, Pouzivatel['PouzivatelID']>;
+
+	@Attribute(DataTypes.JSON)
+	@NotNull
+	declare Produkt: Array<{id: string, name: string, quantity: number}>;
+
+	@Attribute(DataTypes.DATE)
+	@NotNull
+	declare DatumExpedicie: CreationOptional<Date>;
+
+	@Attribute(DataTypes.ENUM("prijata", "vo vyrobe", "expedovana"))
+	@NotNull
+	declare Stav: CreationOptional<"prijata" | "vo vyrobe" | "expedovana">;
+
+	@CreatedAt
+	declare created_at: CreationOptional<Date>;
+
+	@UpdatedAt
+	declare updated_at: CreationOptional<Date>;
+}
+
+@Table({ tableName: 'Zakaznici' })
+export class Zakaznik extends Model<
+	InferAttributes<Zakaznik>,
+	InferCreationAttributes<Zakaznik>
+> {
+	@Attribute(DataTypes.INTEGER)
+	@PrimaryKey
+	@AutoIncrement
+	declare ZakaznikID: CreationOptional<number>;
+
+	@Attribute(DataTypes.STRING)
+	@NotNull
+	declare Meno: string;
+
+	@Attribute(DataTypes.STRING)
+	@NotNull
+	declare Telefon: CreationOptional<string>;
+
+	@Attribute(DataTypes.STRING)
+	@NotNull
+	declare Email: CreationOptional<string>;
+
+	@CreatedAt
+	declare created_at: CreationOptional<Date>;
+
+	@UpdatedAt
+	declare updated_at: CreationOptional<Date>;
+}
+
 import { Sequelize } from '@sequelize/core';
 import { MySqlDialect } from '@sequelize/mysql';
 import { SQLURI } from '$env/static/private';
@@ -117,7 +192,7 @@ export const sequelize = new Sequelize({
 	define: {
 		createdAt: 'created_at',
 		updatedAt: 'updated_at',
-		underscored: true
+		underscored: false
 	},
-	models: [Pouzivatel, Session, Oddelenie]
+	models: [Pouzivatel, Session, Oddelenie, Objednavka, Zakaznik]
 });
