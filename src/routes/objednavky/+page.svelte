@@ -30,7 +30,7 @@
 					{
 						id: 1,
 						name: 'test',
-						quantity: 150
+						quantity: 154
 					},
 					{
 						id: 2,
@@ -670,7 +670,7 @@
 							{/if}
 							{#if showTableDate}
 							<td transition:blur={{duration: 500, easing: sineInOut}} class="px-6 py-4 whitespace-nowrap">
-								<div class="text-sm text-gray-900">{new Date(order.date).toLocaleDateString()}</div>
+								<div class="text-sm text-gray-900">{new Date(order.date).toLocaleDateString("sk")}</div>
 							</td>
 							{/if}
 							<td transition:blur={{duration: 500, easing: sineInOut}} class="px-6 py-4 whitespace-nowrap text-sm font-medium">
