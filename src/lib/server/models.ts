@@ -4,10 +4,11 @@ import {
 	type InferCreationAttributes,
 	Model,
 	DataTypes,
-	type NonAttribute
+	type NonAttribute,
+	type HasOneGetAssociationMixin,
+	type HasOneSetAssociationMixin
 } from '@sequelize/core';
 import {
-	AllowNull,
 	Attribute,
 	AutoIncrement,
 	CreatedAt,
@@ -20,7 +21,10 @@ import {
 } from '@sequelize/core/decorators-legacy';
 
 @Table({ tableName: 'Pouzivatelia' })
-export class Pouzivatel extends Model<InferAttributes<Pouzivatel>, InferCreationAttributes<Pouzivatel>> {
+export class Pouzivatel extends Model<
+	InferAttributes<Pouzivatel>,
+	InferCreationAttributes<Pouzivatel>
+> {
 	@Attribute(DataTypes.INTEGER)
 	@PrimaryKey
 	@AutoIncrement
@@ -36,21 +40,20 @@ export class Pouzivatel extends Model<InferAttributes<Pouzivatel>, InferCreation
 	@Unique
 	declare Email: string;
 
-	@Attribute(DataTypes.ENUM("obchodnik", "administrativny pracovnik", "vyroba", "spravca"))
+	@Attribute(DataTypes.ENUM('obchodnik', 'administrativny pracovnik', 'vyroba', 'spravca'))
 	@NotNull
-	declare Rola: "obchodnik" | "administrativny pracovnik" | "vyroba" | "spravca";
+	declare Rola: 'obchodnik' | 'administrativny pracovnik' | 'vyroba' | 'spravca';
 
 	@Attribute(DataTypes.STRING)
 	@NotNull
 	declare Heslo: string;
 
-	@HasOne(() => Oddelenie, /* foreign key */ 'oddelenieid')
-  	declare OddelenieID?: NonAttribute<Oddelenie>;
+	@HasOne(() => Oddelenie, 'OddelenieID')
+	declare OddelenieID?: NonAttribute<Oddelenie>;
 
-	// This is the foreign key
-	@Attribute(DataTypes.INTEGER)
-	@NotNull
-	declare oddelenieid: number;
+	declare getOddelenie: HasOneGetAssociationMixin<Oddelenie>;
+
+	declare setDrivingLicense: HasOneSetAssociationMixin<Oddelenie, Oddelenie['OddelenieID']>;
 
 	@CreatedAt
 	declare created_at: CreationOptional<Date>;
@@ -59,11 +62,8 @@ export class Pouzivatel extends Model<InferAttributes<Pouzivatel>, InferCreation
 	declare updated_at: CreationOptional<Date>;
 }
 
-@Table({ timestamps: false })
-export class Session extends Model<
-	InferAttributes<Session>,
-	InferCreationAttributes<Session>
-> {
+@Table({ timestamps: false, tableName: 'Sessions' })
+export class Session extends Model<InferAttributes<Session>, InferCreationAttributes<Session>> {
 	@Attribute(DataTypes.STRING)
 	@PrimaryKey
 	@AutoIncrement
@@ -78,18 +78,21 @@ export class Session extends Model<
 	declare user_id: number;
 }
 
-export class Oddelenie extends Model<InferAttributes<Oddelenie>, InferCreationAttributes<Oddelenie>> {
+export class Oddelenie extends Model<
+	InferAttributes<Oddelenie>,
+	InferCreationAttributes<Oddelenie>
+> {
 	@Attribute(DataTypes.INTEGER)
 	@PrimaryKey
 	@AutoIncrement
-	declare OddelenieID: CreationOptional<number>
+	declare OddelenieID: CreationOptional<number>;
 
 	@Attribute(DataTypes.STRING)
 	@NotNull
 	declare Nazov: string;
 
 	@Attribute(DataTypes.TEXT)
-	declare Popis: CreationOptional<string>
+	declare Popis: CreationOptional<string>;
 
 	@CreatedAt
 	declare created_at: CreationOptional<Date>;
@@ -116,5 +119,5 @@ export const sequelize = new Sequelize({
 		updatedAt: 'updated_at',
 		underscored: true
 	},
-	models: [Pouzivatel, Session]
+	models: [Pouzivatel, Session, Oddelenie]
 });

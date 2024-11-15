@@ -11,11 +11,11 @@
 	import Bars3 from '$lib/icons/Bars3.svelte';
 	import ChevronDown from '$lib/icons/ChevronDown.svelte';
 	import ChevronUp from '$lib/icons/ChevronUp.svelte';
-	import { dropDown } from '$lib/util/client';
+	import { dropDown, recursiveSearch } from '$lib/util/client';
 	import { sineInOut } from 'svelte/easing';
 	import { blur, fly } from 'svelte/transition';
 
-	let search: string = $state('');
+	let search: string = $state("");
 
 	let data = {
 		orders: [
@@ -455,12 +455,21 @@
 	let showTableDate = $state(true);
 
 	let showCreateOrderDialog = $state(false);
+
+	function updateSearch(){
+		if(!search.trim().length) return orders = data.orders;
+		//Use Recursive Search
+		orders = data.orders.filter((order) => {
+			if(recursiveSearch(order, search)) return order;
+		});
+	}
 </script>
 
 <div class="grid grid-cols-12 px-2 pt-12 mx-auto max-w-7xl gap-2">
 	<div class="col-span-12">
 		<TextInput
 			bind:value={search}
+			onchange={updateSearch}
 			placeholder="Nájdi objednávku"
 			type="text"
 			id="search"
