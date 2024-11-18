@@ -6,6 +6,7 @@
 	import Dropdown from '$lib/components/Dropdown.svelte';
 	import Checkbox from '$lib/components/forms/Checkbox.svelte';
 	import Label from '$lib/components/forms/Label.svelte';
+	import Radio from '$lib/components/forms/Radio.svelte';
 	import TextInput from '$lib/components/forms/TextInput.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import Bars3 from '$lib/icons/Bars3.svelte';
@@ -18,7 +19,9 @@
 	const { data } = $props();
 	console.log(data);
 
-	let search: string = $state("");
+	let search: string = $state('');
+
+	let selectedValue = $state('selectCustomer');
 
 	let dataa = {
 		orders: [
@@ -459,14 +462,13 @@
 
 	let showCreateOrderDialog = $state(false);
 
-	function updateSearch(){
-		if(!search.trim().length) return orders = dataa.orders;
+	function updateSearch() {
+		if (!search.trim().length) return (orders = dataa.orders);
 		//Use Recursive Search
 		orders = dataa.orders.filter((order) => {
-			if(recursiveSearch(order, search)) return order;
+			if (recursiveSearch(order, search)) return order;
 		});
 	}
-
 </script>
 
 <div class="grid grid-cols-12 px-2 pt-12 mx-auto max-w-7xl gap-2">
@@ -480,7 +482,9 @@
 			name="search"
 		/>
 	</div>
-	<div class="col-span-12 md:col-span-12 border rounded border-border-base bg-background-light-1 overflow-x-auto relative">
+	<div
+		class="col-span-12 md:col-span-12 border rounded border-border-base bg-background-light-1 overflow-x-auto relative"
+	>
 		<div
 			class="flex items-center justify-between flex-auto w-full px-4 py-2 border-b border-b-background-dark-1 text-text-base bg-background-base sticky top-0 left-0 z-20"
 		>
@@ -525,113 +529,120 @@
 						</div>
 					</div>
 				</Dropdown>
-				<Button onclick={() => showCreateOrderDialog = true} style="primary">Vytvoriť objednávku</Button>
+				<Button onclick={() => (showCreateOrderDialog = true)} style="primary"
+					>Vytvoriť objednávku</Button
+				>
 			</div>
 		</div>
 		<table class="min-w-full divide-y divide-gray-200 w-full overflow-x-auto">
 			<thead class="bg-gray-50">
 				<tr>
 					{#if showTableIndex}
-						<th transition:blur={{duration: 500, easing: sineInOut}}
+						<th
+							transition:blur={{ duration: 500, easing: sineInOut }}
 							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 						>
 							#
 						</th>
 					{/if}
 					{#if showTableID}
-					<th transition:blur={{duration: 500, easing: sineInOut}}
-						class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-					>
-						<button
-							class="w-full text-left uppercase flex flex-row gap-1 items-center"
-							onclick={() => {
-								sortBy == 'id' ? (sortBy = '-id') : (sortBy = 'id');
-							}}
+						<th
+							transition:blur={{ duration: 500, easing: sineInOut }}
+							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 						>
-							ID
-							{#if sortBy == 'id'}
-								<Icon scale="tiny">
-									<ChevronUp />
-								</Icon>
-							{:else if sortBy == '-id'}
-								<Icon scale="tiny">
-									<ChevronDown />
-								</Icon>
-							{/if}
-						</button>
-					</th>
+							<button
+								class="w-full text-left uppercase flex flex-row gap-1 items-center"
+								onclick={() => {
+									sortBy == 'id' ? (sortBy = '-id') : (sortBy = 'id');
+								}}
+							>
+								ID
+								{#if sortBy == 'id'}
+									<Icon scale="tiny">
+										<ChevronUp />
+									</Icon>
+								{:else if sortBy == '-id'}
+									<Icon scale="tiny">
+										<ChevronDown />
+									</Icon>
+								{/if}
+							</button>
+						</th>
 					{/if}
 					{#if showTableCustomer}
-					<th transition:blur={{duration: 500, easing: sineInOut}}
-						class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-						style="width: 20%;"
-					>
-						<button
-							class="w-full text-left uppercase flex flex-row gap-1 items-center"
-							onclick={() => {
-								sortBy == 'customer' ? (sortBy = '-customer') : (sortBy = 'customer');
-							}}
+						<th
+							transition:blur={{ duration: 500, easing: sineInOut }}
+							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+							style="width: 20%;"
 						>
-							Zákazník
-							{#if sortBy == 'customer'}
-								<Icon scale="tiny">
-									<ChevronUp />
-								</Icon>
-							{:else if sortBy == '-customer'}
-								<Icon scale="tiny">
-									<ChevronDown />
-								</Icon>
-							{/if}
-						</button>
-					</th>
+							<button
+								class="w-full text-left uppercase flex flex-row gap-1 items-center"
+								onclick={() => {
+									sortBy == 'customer' ? (sortBy = '-customer') : (sortBy = 'customer');
+								}}
+							>
+								Zákazník
+								{#if sortBy == 'customer'}
+									<Icon scale="tiny">
+										<ChevronUp />
+									</Icon>
+								{:else if sortBy == '-customer'}
+									<Icon scale="tiny">
+										<ChevronDown />
+									</Icon>
+								{/if}
+							</button>
+						</th>
 					{/if}
 					{#if showTableProducts}
-					<th transition:blur={{duration: 500, easing: sineInOut}}
-						class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-						style="width: 50%;"
-					>
-						<button
-							class="w-full text-left uppercase flex flex-row gap-1 items-center"
-							onclick={() => {
-								sortBy == 'products' ? (sortBy = '-products') : (sortBy = 'products');
-							}}
+						<th
+							transition:blur={{ duration: 500, easing: sineInOut }}
+							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+							style="width: 50%;"
 						>
-							Produkt - množstvo
-							{#if sortBy == 'products'}
-								<Icon scale="tiny">
-									<ChevronUp />
-								</Icon>
-							{:else if sortBy == '-products'}
-								<Icon scale="tiny">
-									<ChevronDown />
-								</Icon>
-							{/if}
-						</button>
-					</th>
+							<button
+								class="w-full text-left uppercase flex flex-row gap-1 items-center"
+								onclick={() => {
+									sortBy == 'products' ? (sortBy = '-products') : (sortBy = 'products');
+								}}
+							>
+								Produkt - množstvo
+								{#if sortBy == 'products'}
+									<Icon scale="tiny">
+										<ChevronUp />
+									</Icon>
+								{:else if sortBy == '-products'}
+									<Icon scale="tiny">
+										<ChevronDown />
+									</Icon>
+								{/if}
+							</button>
+						</th>
 					{/if}
 					{#if showTableDate}
-					<th transition:blur={{duration: 500, easing: sineInOut}}
-						class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-						style="width: 20%;"
-					>
-						<button
-							class="w-full text-left uppercase flex flex-row gap-1 items-center"
-							onclick={() => {
-								sortBy == 'date' ? (sortBy = '-date') : (sortBy = 'date');
-							}}
+						<th
+							transition:blur={{ duration: 500, easing: sineInOut }}
+							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+							style="width: 20%;"
 						>
-							Date
-							{#if sortBy == 'date'}
-								<Icon scale="tiny">
-									<ChevronUp />
-								</Icon>
-							{:else if sortBy == '-date'}
-								<Icon scale="tiny">
-									<ChevronDown />
-								</Icon>
-							{/if}
-						</button>
-					</th>
+							<button
+								class="w-full text-left uppercase flex flex-row gap-1 items-center"
+								onclick={() => {
+									sortBy == 'date' ? (sortBy = '-date') : (sortBy = 'date');
+								}}
+							>
+								Date
+								{#if sortBy == 'date'}
+									<Icon scale="tiny">
+										<ChevronUp />
+									</Icon>
+								{:else if sortBy == '-date'}
+									<Icon scale="tiny">
+										<ChevronDown />
+									</Icon>
+								{/if}
+							</button>
+						</th>
 					{/if}
 					<th
 						class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -646,38 +657,58 @@
 					{#each orders as order, index}
 						<tr class="hover:bg-background">
 							{#if showTableIndex}
-								<td transition:blur={{duration: 500, easing: sineInOut}} class="px-6 py-4 whitespace-nowrap text-text-light-3">
+								<td
+									transition:blur={{ duration: 500, easing: sineInOut }}
+									class="px-6 py-4 whitespace-nowrap text-text-light-3"
+								>
 									{dataa.orders.length - index}.
 								</td>
 							{/if}
 							{#if showTableID}
-							<td transition:blur={{duration: 500, easing: sineInOut}} class="px-6 py-4 whitespace-nowrap">
-								{order.id}
-							</td>
+								<td
+									transition:blur={{ duration: 500, easing: sineInOut }}
+									class="px-6 py-4 whitespace-nowrap"
+								>
+									{order.id}
+								</td>
 							{/if}
 							{#if showTableCustomer}
-							<td transition:blur={{duration: 500, easing: sineInOut}} class="px-6 py-4 whitespace-nowrap">
-								<div class="text-sm font-medium text-gray-900">
-									{order.customer.name}
-									{order.customer.surname}
-								</div>
-							</td>
+								<td
+									transition:blur={{ duration: 500, easing: sineInOut }}
+									class="px-6 py-4 whitespace-nowrap"
+								>
+									<div class="text-sm font-medium text-gray-900">
+										{order.customer.name}
+										{order.customer.surname}
+									</div>
+								</td>
 							{/if}
 							{#if showTableProducts}
-							<td transition:blur={{duration: 500, easing: sineInOut}} class="px-6 py-4 whitespace-nowrap">
-								<ul>
-									{#each order.products as product}
-										<li class="text-sm text-gray-900">{product.name} - {product.quantity}</li>
-									{/each}
-								</ul>
-							</td>
+								<td
+									transition:blur={{ duration: 500, easing: sineInOut }}
+									class="px-6 py-4 whitespace-nowrap"
+								>
+									<ul>
+										{#each order.products as product}
+											<li class="text-sm text-gray-900">{product.name} - {product.quantity}</li>
+										{/each}
+									</ul>
+								</td>
 							{/if}
 							{#if showTableDate}
-							<td transition:blur={{duration: 500, easing: sineInOut}} class="px-6 py-4 whitespace-nowrap">
-								<div class="text-sm text-gray-900">{new Date(order.date).toLocaleDateString("sk")}</div>
-							</td>
+								<td
+									transition:blur={{ duration: 500, easing: sineInOut }}
+									class="px-6 py-4 whitespace-nowrap"
+								>
+									<div class="text-sm text-gray-900">
+										{new Date(order.date).toLocaleDateString('sk')}
+									</div>
+								</td>
 							{/if}
-							<td transition:blur={{duration: 500, easing: sineInOut}} class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+							<td
+								transition:blur={{ duration: 500, easing: sineInOut }}
+								class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+							>
 								<a href="/" class="text-indigo-600 hover:text-indigo-900">Zmeniť</a>
 							</td>
 						</tr>
@@ -690,21 +721,78 @@
 
 <Dialog bind:open={showCreateOrderDialog}>
 	{#snippet header()}
-			Vytvoriť objednávku
+		Vytvoriť objednávku
 	{/snippet}
+	<div>
+		<div class="px-4 py-2">
+			<div class="flex flex-row flex-nowrap gap-4">
+				<div class="flex flex-row gap-1 py-1">
+					<Radio
+						label="select customer"
+						id="selectCustomer"
+						name="customer"
+						value="selectCustomer"
+						bind:group={selectedValue}
+					/>
+					<Label forInput="selectCustomer">Vybrať zákazníka</Label>
+				</div>
+				<div class="flex flex-row gap-1 py-1">
+					<Radio
+						label="create customer"
+						id="createCustomer"
+						name="customer"
+						value="createCustomer"
+						bind:group={selectedValue}
+					/>
+					<Label forInput="createCustomer">Vytvoriť zákazníka</Label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<form>
+		{#if selectedValue == 'selectCustomer'}
+			<div class="py-2 px-4">
+				<div class="flex flex-col gap-1 py-1">
+					<Label forInput="customer">Zákazník</Label>
+					<TextInput type="text" id="customer" name="customer" placeholder="Zákazník" />
+				</div>
+				<div class="flex flex-col gap-1 py-1">
+					<Label forInput="product">Produkt</Label>
+					<TextInput type="text" id="product" name="product" placeholder="Produkt" />
+				</div>
+				<div class="flex flex-col gap-1 py-1">
+					<Label forInput="quantity">Množstvo</Label>
+					<TextInput type="number" id="quantity" name="quantity" placeholder="Množstvo" />
+				</div>
+			</div>
+		{:else}
+			<div class="py-2 px-4">
+				<div class="flex flex-col gap-1 py-1">
+					<Label forInput="customer">Zákazník</Label>
+					<TextInput type="text" id="customer" name="customer" placeholder="Zákazník" />
+				</div>
+				<div class="flex flex-col gap-1 py-1">
+					<Label forInput="product">Produkt</Label>
+					<TextInput type="text" id="product" name="product" placeholder="Produkt" />
+				</div>
+				<div class="flex flex-col gap-1 py-1">
+					<Label forInput="quantity">Množstvo</Label>
+					<TextInput type="number" id="quantity" name="quantity" placeholder="Množstvo" />
+				</div>
+			</div>
+		{/if}
+	</form>
 	<form>
 		<div class="px-4 py-2">
-			<div class="flex flex-col gap-1 py-1">
-				<Label forInput="email">E-Mail</Label>
-				<TextInput type="email" id="email" name="email" placeholder="E-Mail" />
-			</div>
 			<div class="flex flex-col gap-1 py-1">
 				<Label forInput="password">Password</Label>
 				<TextInput type="password" id="password" name="password" placeholder="Password" />
 			</div>
 		</div>
 		<div class="flex justify-between w-full px-4 py-2 border-t border-slate-400/30">
-			<Button onclick={() => (showCreateOrderDialog = false)} type="reset" style="opaque">Zrušiť</Button>
+			<Button onclick={() => (showCreateOrderDialog = false)} type="reset" style="opaque"
+				>Zrušiť</Button
+			>
 		</div>
 	</form>
 </Dialog>

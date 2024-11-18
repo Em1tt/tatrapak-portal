@@ -1,5 +1,5 @@
 import type { LayoutServerLoad } from './$types';
-import type { Pouzivatel, Session } from '$lib/server/models';
+import { Pouzivatel, type Session } from '$lib/server/models';
 
 export const load: LayoutServerLoad = async ({ locals, cookies }) => {
     const theme = cookies.get("theme");

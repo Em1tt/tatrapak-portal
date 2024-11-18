@@ -6,11 +6,13 @@ import {
 	DataTypes,
 	type NonAttribute,
 	type HasOneGetAssociationMixin,
-	type HasOneSetAssociationMixin
+	type HasOneSetAssociationMixin,
+	type BelongsToGetAssociationMixin
 } from '@sequelize/core';
 import {
 	Attribute,
 	AutoIncrement,
+	BelongsTo,
 	CreatedAt,
 	HasOne,
 	NotNull,
@@ -28,6 +30,7 @@ export class Pouzivatel extends Model<
 	@Attribute(DataTypes.INTEGER)
 	@PrimaryKey
 	@AutoIncrement
+	@Unique
 	declare PouzivatelID: CreationOptional<number>;
 
 	@Attribute(DataTypes.STRING)
@@ -50,10 +53,8 @@ export class Pouzivatel extends Model<
 
 	@HasOne(() => Oddelenie, 'OddelenieID')
 	declare OddelenieID?: NonAttribute<Oddelenie>;
-
 	declare getOddelenie: HasOneGetAssociationMixin<Oddelenie>;
-
-	declare setDrivingLicense: HasOneSetAssociationMixin<Oddelenie, Oddelenie['OddelenieID']>;
+	declare setOddelenie: HasOneSetAssociationMixin<Oddelenie, Oddelenie['OddelenieID']>;
 
 	@CreatedAt
 	declare created_at: CreationOptional<Date>;
@@ -73,11 +74,9 @@ export class Session extends Model<InferAttributes<Session>, InferCreationAttrib
 	@NotNull
 	declare expires_at: Date;
 
-	@HasOne(() => Pouzivatel, 'PouzivatelID')
+	@HasOne(() => Pouzivatel, "PouzivatelID")
 	declare user_id?: NonAttribute<Pouzivatel>;
-
 	declare getUser: HasOneGetAssociationMixin<Pouzivatel>;
-
 	declare setUser: HasOneSetAssociationMixin<Pouzivatel, Pouzivatel['PouzivatelID']>;
 }
 
@@ -116,17 +115,12 @@ export class Objednavka extends Model<
 
 	@HasOne(() => Zakaznik, 'ZakaznikID')
 	declare ZakaznikID?: NonAttribute<Zakaznik>;
-
 	declare getCustomer: HasOneGetAssociationMixin<Zakaznik>;
-
 	declare setCustomer: HasOneSetAssociationMixin<Zakaznik, Zakaznik['ZakaznikID']>;
 
-	@HasOne(() => Pouzivatel, 'PouzivatelID')
-	declare PouzivatelID?: NonAttribute<Pouzivatel>;
-
-	declare getUser: HasOneGetAssociationMixin<Pouzivatel>;
-
-	declare setUser: HasOneSetAssociationMixin<Pouzivatel, Pouzivatel['PouzivatelID']>;
+	@BelongsTo(() => Pouzivatel, "PouzivatelID")
+  	declare Pouzivatel?: NonAttribute<Pouzivatel>;
+	declare getUser: BelongsToGetAssociationMixin<Pouzivatel>;
 
 	@Attribute(DataTypes.JSON)
 	@NotNull
