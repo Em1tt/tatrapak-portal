@@ -76,10 +76,11 @@ export class Session extends Model<InferAttributes<Session>, InferCreationAttrib
 
 	@HasOne(() => Pouzivatel, "PouzivatelID")
 	declare user_id?: NonAttribute<Pouzivatel>;
-	declare getUser: HasOneGetAssociationMixin<Pouzivatel>;
-	declare setUser: HasOneSetAssociationMixin<Pouzivatel, Pouzivatel['PouzivatelID']>;
+	declare getPouzivatel: HasOneGetAssociationMixin<Pouzivatel>;
+	declare setPouzivatel: HasOneSetAssociationMixin<Pouzivatel, Pouzivatel['PouzivatelID']>;
 }
 
+@Table({ tableName: 'Oddelenia' })
 export class Oddelenie extends Model<
 	InferAttributes<Oddelenie>,
 	InferCreationAttributes<Oddelenie>
@@ -186,7 +187,20 @@ export const sequelize = new Sequelize({
 	define: {
 		createdAt: 'created_at',
 		updatedAt: 'updated_at',
-		underscored: false
+		underscored: false,
 	},
 	models: [Pouzivatel, Session, Oddelenie, Objednavka, Zakaznik]
 });
+
+sequelize.authenticate()
+    .then(() => {
+        console.log('Connection has been established successfully.');
+        return sequelize.sync();
+    })
+    .then(() => {
+        console.log('Models synchronized successfully.');
+        // Now you can use the models and their association mixin methods
+    })
+    .catch((error) => {
+        console.error('Unable to connect to the database:', error);
+    });

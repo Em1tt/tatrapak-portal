@@ -31,7 +31,8 @@ export async function createSession(token: string, userId: number): Promise<Sess
 		session_id: sessionId,
 		expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	});
-	await session.setUser(userId);
+	console.log(session);
+	await session.setPouzivatel(userId);
 	return session;
 }
 
@@ -47,7 +48,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		return { session: null, user: null };
 	}
 
-	const user = await session.getUser();
+	const user = await session.getPouzivatel();
 
 	if (!user) {
 		//Something went horribly wrong, maybe the user was deleted and tried to login again with the same session token

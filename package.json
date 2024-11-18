@@ -44,6 +44,7 @@
 		"@oslojs/encoding": "^1.1.0",
 		"@sequelize/core": "^7.0.0-alpha.42",
 		"@sequelize/mysql": "^7.0.0-alpha.43",
+		"@sveltejs/adapter-node": "^5.2.9",
 		"sequelize": "^6.37.5",
 		"sqlite3": "^5.1.7",
 		"svelte-debounce": "^0.0.3"
