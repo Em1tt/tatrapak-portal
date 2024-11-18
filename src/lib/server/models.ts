@@ -7,13 +7,14 @@ import {
 	type NonAttribute,
 	type HasOneGetAssociationMixin,
 	type HasOneSetAssociationMixin,
-	type BelongsToGetAssociationMixin
+	type BelongsToGetAssociationMixin,
 } from '@sequelize/core';
 import {
 	Attribute,
 	AutoIncrement,
 	BelongsTo,
 	CreatedAt,
+	HasMany,
 	HasOne,
 	NotNull,
 	PrimaryKey,
@@ -22,7 +23,7 @@ import {
 	UpdatedAt
 } from '@sequelize/core/decorators-legacy';
 
-@Table({ tableName: 'Pouzivatelia' })
+@Table({ tableName: 'Pouzivatelia', modelName: "Pouzivatel" })
 export class Pouzivatel extends Model<
 	InferAttributes<Pouzivatel>,
 	InferCreationAttributes<Pouzivatel>
@@ -56,6 +57,11 @@ export class Pouzivatel extends Model<
 	declare getOddelenie: HasOneGetAssociationMixin<Oddelenie>;
 	declare setOddelenie: HasOneSetAssociationMixin<Oddelenie, Oddelenie['OddelenieID']>;
 
+	@HasMany(() => Session, {foreignKey: 'user_id', inverse: "pouzivatel"})
+	declare sessions?: NonAttribute<Session[]>;
+	declare getSessions: HasOneGetAssociationMixin<Session>;
+	declare setSessions: HasOneSetAssociationMixin<Session, Session["user_id"]>;
+
 	@CreatedAt
 	declare created_at: CreationOptional<Date>;
 
@@ -63,7 +69,7 @@ export class Pouzivatel extends Model<
 	declare updated_at: CreationOptional<Date>;
 }
 
-@Table({ timestamps: false, tableName: 'Sessions' })
+@Table({ timestamps: false, tableName: 'Sessions', modelName: "Session" })
 export class Session extends Model<InferAttributes<Session>, InferCreationAttributes<Session>> {
 	@Attribute(DataTypes.STRING)
 	@PrimaryKey
@@ -74,10 +80,14 @@ export class Session extends Model<InferAttributes<Session>, InferCreationAttrib
 	@NotNull
 	declare expires_at: Date;
 
-	@HasOne(() => Pouzivatel, "PouzivatelID")
-	declare user_id?: NonAttribute<Pouzivatel>;
-	declare getPouzivatel: HasOneGetAssociationMixin<Pouzivatel>;
-	declare setPouzivatel: HasOneSetAssociationMixin<Pouzivatel, Pouzivatel['PouzivatelID']>;
+	/** Defined by {@link Pouzivatel.sessions} */
+	declare pouzivatel?: NonAttribute<Pouzivatel>;
+	declare getPouzivatel: BelongsToGetAssociationMixin<Pouzivatel>;
+
+	// This is the foreign key
+	@Attribute(DataTypes.INTEGER)
+	@NotNull
+	declare user_id: number;
 }
 
 @Table({ tableName: 'Oddelenia' })
