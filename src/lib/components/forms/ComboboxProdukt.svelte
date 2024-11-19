@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type Zakaznik } from '$lib/server/models';
+	import { type Produkt } from '$lib/server/models';
 	import { recursiveSearch } from '$lib/util/client';
 	import Button from '../Button.svelte';
 	import TextInput from './TextInput.svelte';
@@ -14,7 +14,7 @@
 		id: string;
 		name: string;
 		placeholder?: string;
-		data: Zakaznik[];
+		data: Produkt[];
 		reportedValue?: string;
 		actualValue?: number;
 	} = $props();
@@ -35,6 +35,11 @@
 			value = reportedValue;
 		}
 	});
+
+	function formatWeight(weight: string): string {
+		const w = parseFloat(weight);
+        return w % 1 === 0 ? w.toFixed(0) : w.toFixed(1);
+    }
 </script>
 
 <div class="relative">
@@ -47,8 +52,8 @@
 				{#each query as item}
 					<Button
 						onclick={() => {
-							reportedValue = item.Meno;
-							actualValue = item.ZakaznikID;
+							reportedValue = item.Nazov;
+							actualValue = item.ProduktID;
 						}}
 						type="button"
 						style="opaque"
@@ -56,12 +61,12 @@
 						shrink={false}
 					>
 						<div class="flex flex-col text-left">
-						<p class="text-text-base">{item.Meno}</p>
-						{#if item.Email}
-						<p class="text-sm text-text-light-3">{item.Email}</p>
+						<p class="text-text-base">{item.Nazov} {item.Hmotnost && parseFloat(item.Hmotnost) > 0 ? `(${formatWeight(item.Hmotnost)}g)` : ""}</p>
+						{#if item.KatalogoveCislo}
+						<p class="text-sm text-text-light-3">{item.KatalogoveCislo}</p>
 						{/if}
-						{#if item.Telefon}
-						<p class="text-sm text-text-light-3">{item.Telefon}</p>
+						{#if item.Cena && parseFloat(item.Cena) > 0}
+						<p class="text-sm text-text-light-3">€{item.Cena}/ks</p>
 						{/if}
 					</div>
 					</Button>

@@ -5,7 +5,8 @@
 	import Dialog from '$lib/components/Dialog.svelte';
 	import Dropdown from '$lib/components/Dropdown.svelte';
 	import Checkbox from '$lib/components/forms/Checkbox.svelte';
-	import Combobox from '$lib/components/forms/ComboboxZakaznik.svelte';
+	import ComboboxZakaznik from '$lib/components/forms/ComboboxZakaznik.svelte';
+	import ComboboxProdukt from '$lib/components/forms/ComboboxProdukt.svelte';
 	import Label from '$lib/components/forms/Label.svelte';
 	import NumberInput from '$lib/components/forms/NumberInput.svelte';
 	import Radio from '$lib/components/forms/Radio.svelte';
@@ -24,6 +25,7 @@
 	let search: string = $state('');
 
 	let selectedValue = $state('selectCustomer');
+	let selectedValueProduct = $state('selectProduct');
 	let sortBy = $state('-date');
 
 	let orders = $state(data.objednavky);
@@ -142,6 +144,11 @@
 					<div class="flex flex-col p-2">
 						<div class="flex flex-row items-center gap-2">
 							<Checkbox bind:checked={showTableProducts} label="Produkty" id="tableProducts" />
+						</div>
+					</div>
+					<div class="flex flex-col p-2">
+						<div class="flex flex-row items-center gap-2">
+							<Checkbox bind:checked={showTableExpeditionDate} label="Dátum expedície" id="tableExpeditionDate" />
 						</div>
 					</div>
 					<div class="flex flex-col p-2">
@@ -411,27 +418,75 @@
 			<div class="py-2 px-4">
 				<div class="flex flex-col gap-1 py-1">
 					<Label forInput="customer">Zákazník</Label>
-					<Combobox data={data.zakaznici} id="customer" name="customer" placeholder="Zákazník"/>
+					<ComboboxZakaznik data={data.zakaznici} id="customer" name="customer" placeholder="Meno/E-mail/Telefónne číslo"/>
 				</div>
 			</div>
 		{:else}
 			<div class="py-2 px-4">
-				<div class="flex flex-col gap-1 py-1">
-					<Label forInput="customer">Zákazník</Label>
-					<TextInput type="text" id="customer" name="customer" placeholder="Zákazník" />
+				<div class="flex flex-col gap-1">
+					<Label forInput="nameCustomer">Meno zákazníka</Label>
+					<TextInput type="text" id="nameCustomer" name="nameCustomer" placeholder="Jozef Mrkva" />
 				</div>
 				<div class="flex flex-col gap-1 py-1">
-					<Label forInput="product">Produkt</Label>
-					<TextInput type="text" id="product" name="product" placeholder="Produkt" />
+					<Label forInput="emailCustomer">E-mail zákazníka (nepovinné)</Label>
+					<TextInput type="email" id="emailCustomer" name="emailCustomer" placeholder="jozefmrkva@gmail.com" />
 				</div>
 				<div class="flex flex-col gap-1 py-1">
-					<Label forInput="quantity">Množstvo</Label>
-					<NumberInput min={0} max={10} id="quantity" name="quantity" placeholder="Množstvo" />
+					<Label forInput="emailCustomer">Telefón zákazníka (nepovinné)</Label>
+					<TextInput type="email" id="telephoneCustomer" name="telephoneCustomer" placeholder="0123 456 789" />
 				</div>
 			</div>
 		{/if}
 	</form>
+	<hr class="bg-transparent border-background">
+	<div class="px-4 py-2">
+		<div class="flex flex-row flex-nowrap gap-4">
+			<div class="flex flex-row gap-1 py-1">
+				<Radio
+					label="select product"
+					id="selectProduct"
+					name="product"
+					value="selectProduct"
+					bind:group={selectedValueProduct}
+				/>
+				<Label forInput="selectProduct">Vybrať produkt</Label>
+			</div>
+			<div class="flex flex-row gap-1 py-1">
+				<Radio
+					label="create product"
+					id="createProduct"
+					name="product"
+					value="createProduct"
+					bind:group={selectedValueProduct}
+				/>
+				<Label forInput="createProduct">Vytvoriť produkt</Label>
+			</div>
+		</div>
+	</div>
 	<form>
+		{#if selectedValueProduct == 'selectProduct'}
+			<div class="py-2 px-4 grid grid-cols-4 gap-2">
+				<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-3">
+					<Label forInput="product">Produkt</Label>
+					<ComboboxProdukt data={data.produkty} id="product" name="product" placeholder="Názov produktu"/>
+				</div>
+				<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-1">
+					<Label forInput="product">Množstvo</Label>
+					<NumberInput min={0} max={100000} id="quantityProduct" name="quantityProduct" placeholder="1" />
+				</div>
+			</div>
+		{:else}
+			<div class="py-2 px-4">
+				<div class="flex flex-col gap-1">
+					<Label forInput="nameProduct">Názov produktu</Label>
+					<TextInput type="text" id="nameProduct" name="nameProduct" placeholder="Jablko" />
+				</div>
+				<div class="flex flex-col gap-1 py-1">
+					<Label forInput="quantityProduct">Množstvo produktu</Label>
+					<NumberInput min={0} max={100000} id="quantityProduct" name="quantityProduct" placeholder="1" />
+				</div>
+			</div>
+		{/if}
 		<div class="px-4 py-2">
 			<div class="flex flex-col gap-1 py-1">
 				<Label forInput="password">Password</Label>

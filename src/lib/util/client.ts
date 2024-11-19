@@ -43,7 +43,10 @@ export function recursiveSearch(
 				}
 			}
 		} else if (typeof obj[key] === 'string') {
-			if (!isNaN(parseInt(searchFor))) continue;
+			//if (!isNaN(parseInt(searchFor))) continue;
+			if(!isNaN(parseInt(searchFor))) {
+				if(obj[key].startsWith(searchFor)) return true;
+			}
 			if (obj[key].toLowerCase().includes(searchFor.toLowerCase())) {
 				return true;
 			}
