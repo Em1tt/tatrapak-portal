@@ -29,10 +29,9 @@ export async function createSession(token: string, userId: number): Promise<Sess
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session = await Session.create({
 		session_id: sessionId,
-		expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
+		expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+		user_id: userId
 	});
-	console.log(session);
-	await session.setPouzivatel(userId);
 	return session;
 }
 

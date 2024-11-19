@@ -6,13 +6,13 @@ import {
 	DataTypes,
 	type NonAttribute,
 	type HasOneGetAssociationMixin,
+	type HasManyGetAssociationsMixin,
 	type HasOneSetAssociationMixin,
 	type BelongsToGetAssociationMixin,
 } from '@sequelize/core';
 import {
 	Attribute,
 	AutoIncrement,
-	BelongsTo,
 	CreatedAt,
 	HasMany,
 	HasOne,
@@ -52,15 +52,18 @@ export class Pouzivatel extends Model<
 	@NotNull
 	declare Heslo: string;
 
-	@HasOne(() => Oddelenie, 'OddelenieID')
-	declare OddelenieID?: NonAttribute<Oddelenie>;
+	@HasOne(() => Oddelenie, {foreignKey: 'OddelenieID', inverse: "pouzivatelia"})
+	declare oddelenie: NonAttribute<Oddelenie>;
 	declare getOddelenie: HasOneGetAssociationMixin<Oddelenie>;
 	declare setOddelenie: HasOneSetAssociationMixin<Oddelenie, Oddelenie['OddelenieID']>;
 
 	@HasMany(() => Session, {foreignKey: 'user_id', inverse: "pouzivatel"})
 	declare sessions?: NonAttribute<Session[]>;
-	declare getSessions: HasOneGetAssociationMixin<Session>;
-	declare setSessions: HasOneSetAssociationMixin<Session, Session["user_id"]>;
+	declare getSessions: HasManyGetAssociationsMixin<Session>;
+
+	@HasMany(() => Objednavka, {foreignKey: "PouzivatelID", inverse: "pouzivatel"})
+	declare objednavky?: NonAttribute<Objednavka[]>;
+	declare getObjednavky: HasManyGetAssociationsMixin<Objednavka>;
 
 	@CreatedAt
 	declare created_at: CreationOptional<Date>;
@@ -107,6 +110,10 @@ export class Oddelenie extends Model<
 	@Attribute(DataTypes.TEXT)
 	declare Popis: CreationOptional<string>;
 
+	/** Defined by {@link Pouzivatel.oddelenie} */
+	declare oddelenie: NonAttribute<Oddelenie>;
+	declare getOddelenie: BelongsToGetAssociationMixin<Oddelenie>;
+
 	@CreatedAt
 	declare created_at: CreationOptional<Date>;
 
@@ -124,14 +131,19 @@ export class Objednavka extends Model<
 	@AutoIncrement
 	declare ObjednavkaID: CreationOptional<number>;
 
-	@HasOne(() => Zakaznik, 'ZakaznikID')
-	declare ZakaznikID?: NonAttribute<Zakaznik>;
-	declare getCustomer: HasOneGetAssociationMixin<Zakaznik>;
-	declare setCustomer: HasOneSetAssociationMixin<Zakaznik, Zakaznik['ZakaznikID']>;
+	@Attribute(DataTypes.INTEGER)
+	declare ZakaznikID: number;
 
-	@BelongsTo(() => Pouzivatel, "PouzivatelID")
-  	declare Pouzivatel?: NonAttribute<Pouzivatel>;
-	declare getUser: BelongsToGetAssociationMixin<Pouzivatel>;
+	@Attribute(DataTypes.INTEGER)
+	declare PouzivatelID: number;
+
+	/** Defined by {@link Pouzivatel.objednavky} */
+	declare pouzivatel?: NonAttribute<Pouzivatel>;
+	declare getPouzivatel: BelongsToGetAssociationMixin<Pouzivatel>;
+
+	/** Defined by {@link Zakaznik.objednavky} */
+	declare zakaznik?: NonAttribute<Zakaznik>;
+	declare getZakaznik: BelongsToGetAssociationMixin<Zakaznik>;
 
 	@Attribute(DataTypes.JSON)
 	@NotNull
@@ -173,6 +185,10 @@ export class Zakaznik extends Model<
 	@Attribute(DataTypes.STRING)
 	@NotNull
 	declare Email: CreationOptional<string>;
+
+	@HasMany(() => Objednavka, {foreignKey: "ZakaznikID", inverse: "zakaznik"})
+	declare objednavky?: NonAttribute<Objednavka[]>;
+	declare getObjednavky: HasManyGetAssociationsMixin<Objednavka>;
 
 	@CreatedAt
 	declare created_at: CreationOptional<Date>;
