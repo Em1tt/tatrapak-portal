@@ -5,7 +5,9 @@
 	import Dialog from '$lib/components/Dialog.svelte';
 	import Dropdown from '$lib/components/Dropdown.svelte';
 	import Checkbox from '$lib/components/forms/Checkbox.svelte';
+	import Combobox from '$lib/components/forms/ComboboxZakaznik.svelte';
 	import Label from '$lib/components/forms/Label.svelte';
+	import NumberInput from '$lib/components/forms/NumberInput.svelte';
 	import Radio from '$lib/components/forms/Radio.svelte';
 	import TextInput from '$lib/components/forms/TextInput.svelte';
 	import Icon from '$lib/components/Icon.svelte';
@@ -22,466 +24,51 @@
 	let search: string = $state('');
 
 	let selectedValue = $state('selectCustomer');
-
-	let newData = {
-		orders: [
-			{
-				ObjednavkaID: 1,
-				ZakaznikID: 1,
-				PouzivatelID: 1,
-				Produkt: {},
-				DatumExpedicie: null,
-				Stav: 'prijata',
-				created_at: '2024-11-19T06:17:28.000Z',
-				updated_at: '2024-11-19T06:17:28.000Z',
-				zakaznik: {
-  "PouzivatelID": 1,
-  "Meno": "Samuel Neupauer",
-  "Email": "marcincak@proton.me",
-  "Rola": "obchodnik",
-  "Heslo": "$argon2id$v=19$m=19456,t=2,p=1$3DWOjQXQBhLMnLKzh6xG4w$oZRuVrJ5RQvda+hA/Rq3UYFc1OKV42ofqMHn125C480",
-  "created_at": "2024-11-15T06:21:54.000Z",
-  "updated_at": "2024-11-15T08:45:57.000Z"
-},
-				pouzivatel: {
-  "ZakaznikID": 1,
-  "Meno": "John Doe",
-  "Telefon": "421949060273",
-  "Email": "johndoe@test.com",
-  "created_at": "2024-11-19T06:15:55.000Z",
-  "updated_at": "2024-11-19T06:15:55.000Z"
-}
-			}
-		]
-	};
-
-	let dataa = {
-		orders: [
-			{
-				id: 1,
-				customer: {
-					id: 1,
-					name: 'Richard',
-					surname: 'Marcinčák'
-				},
-				products: [
-					{
-						id: 1,
-						name: 'test',
-						quantity: 154
-					},
-					{
-						id: 2,
-						name: 'produkt2',
-						quantity: 2000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 2,
-				customer: {
-					id: 2,
-					name: 'Anna',
-					surname: 'Nováková'
-				},
-				products: [
-					{
-						id: 3,
-						name: 'produkt3',
-						quantity: 300
-					},
-					{
-						id: 4,
-						name: 'produkt4',
-						quantity: 4000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 3,
-				customer: {
-					id: 3,
-					name: 'John',
-					surname: 'Doe'
-				},
-				products: [
-					{
-						id: 5,
-						name: 'produkt5',
-						quantity: 500
-					},
-					{
-						id: 6,
-						name: 'produkt6',
-						quantity: 6000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 4,
-				customer: {
-					id: 1,
-					name: 'Richard',
-					surname: 'Marcinčák'
-				},
-				products: [
-					{
-						id: 1,
-						name: 'test',
-						quantity: 150
-					},
-					{
-						id: 2,
-						name: 'produkt2',
-						quantity: 2000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 5,
-				customer: {
-					id: 2,
-					name: 'Anna',
-					surname: 'Nováková'
-				},
-				products: [
-					{
-						id: 3,
-						name: 'produkt3',
-						quantity: 300
-					},
-					{
-						id: 4,
-						name: 'produkt4',
-						quantity: 4000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 6,
-				customer: {
-					id: 3,
-					name: 'John',
-					surname: 'Doe'
-				},
-				products: [
-					{
-						id: 5,
-						name: 'produkt5',
-						quantity: 500
-					},
-					{
-						id: 6,
-						name: 'produkt6',
-						quantity: 6000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 7,
-				customer: {
-					id: 1,
-					name: 'Richard',
-					surname: 'Marcinčák'
-				},
-				products: [
-					{
-						id: 1,
-						name: 'test',
-						quantity: 150
-					},
-					{
-						id: 2,
-						name: 'produkt2',
-						quantity: 2000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 8,
-				customer: {
-					id: 2,
-					name: 'Anna',
-					surname: 'Nováková'
-				},
-				products: [
-					{
-						id: 3,
-						name: 'produkt3',
-						quantity: 300
-					},
-					{
-						id: 4,
-						name: 'produkt4',
-						quantity: 4000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 9,
-				customer: {
-					id: 3,
-					name: 'John',
-					surname: 'Doe'
-				},
-				products: [
-					{
-						id: 5,
-						name: 'produkt5',
-						quantity: 500
-					},
-					{
-						id: 6,
-						name: 'produkt6',
-						quantity: 6000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 10,
-				customer: {
-					id: 1,
-					name: 'Richard',
-					surname: 'Marcinčák'
-				},
-				products: [
-					{
-						id: 1,
-						name: 'test',
-						quantity: 150
-					},
-					{
-						id: 2,
-						name: 'produkt2',
-						quantity: 2000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 11,
-				customer: {
-					id: 2,
-					name: 'Anna',
-					surname: 'Nováková'
-				},
-				products: [
-					{
-						id: 3,
-						name: 'produkt3',
-						quantity: 300
-					},
-					{
-						id: 4,
-						name: 'produkt4',
-						quantity: 4000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 12,
-				customer: {
-					id: 3,
-					name: 'John',
-					surname: 'Doe'
-				},
-				products: [
-					{
-						id: 5,
-						name: 'produkt5',
-						quantity: 500
-					},
-					{
-						id: 6,
-						name: 'produkt6',
-						quantity: 6000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 13,
-				customer: {
-					id: 1,
-					name: 'Richard',
-					surname: 'Marcinčák'
-				},
-				products: [
-					{
-						id: 1,
-						name: 'test',
-						quantity: 150
-					},
-					{
-						id: 2,
-						name: 'produkt2',
-						quantity: 2000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 14,
-				customer: {
-					id: 2,
-					name: 'Anna',
-					surname: 'Nováková'
-				},
-				products: [
-					{
-						id: 3,
-						name: 'produkt3',
-						quantity: 300
-					},
-					{
-						id: 4,
-						name: 'produkt4',
-						quantity: 4000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 15,
-				customer: {
-					id: 3,
-					name: 'John',
-					surname: 'Doe'
-				},
-				products: [
-					{
-						id: 5,
-						name: 'produkt5',
-						quantity: 500
-					},
-					{
-						id: 6,
-						name: 'produkt6',
-						quantity: 6000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 16,
-				customer: {
-					id: 1,
-					name: 'Richard',
-					surname: 'Marcinčák'
-				},
-				products: [
-					{
-						id: 1,
-						name: 'test',
-						quantity: 150
-					},
-					{
-						id: 2,
-						name: 'produkt2',
-						quantity: 2000
-					}
-				],
-				date: new Date().getTime()
-			},
-			{
-				id: 17,
-				customer: {
-					id: 2,
-					name: 'Anna',
-					surname: 'Nováková'
-				},
-				products: [
-					{
-						id: 3,
-						name: 'produkt3',
-						quantity: 300
-					},
-					{
-						id: 4,
-						name: 'produkt4',
-						quantity: 4000
-					}
-				],
-				date: 1532960000000
-			},
-			{
-				id: 18,
-				customer: {
-					id: 3,
-					name: 'John',
-					surname: 'Doe'
-				},
-				products: [
-					{
-						id: 5,
-						name: 'produkt5',
-						quantity: 500
-					},
-					{
-						id: 6,
-						name: 'produkt6',
-						quantity: 6000
-					}
-				],
-				date: 1632960000000
-			}
-		]
-	};
-
 	let sortBy = $state('-date');
 
-	let orders = $state(dataa.orders);
+	let orders = $state(data.objednavky);
 
 	const query = new URLSearchParams($page.url.searchParams.toString());
 
 	$effect(() => {
 		query.set('sortBy', sortBy);
 		goto(`?${query.toString()}`);
+		if(!orders) return;
 		orders = orders.sort((a, b) => {
 			if (sortBy == 'id') {
-				return a.id - b.id;
+				return a.ObjednavkaID - b.ObjednavkaID;
 			} else if (sortBy == '-id') {
-				return b.id - a.id;
+				return b.ObjednavkaID - a.ObjednavkaID;
 			} else if (sortBy == 'customer') {
-				if (a.customer.surname.toLowerCase() < b.customer.surname.toLowerCase()) {
+				if (a.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase() < b.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase()) {
 					return -1;
 				}
-				if (a.customer.surname.toLowerCase() > b.customer.surname.toLowerCase()) {
+				if (a.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase() > b.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase()) {
 					return 1;
 				}
 				return 0;
 			} else if (sortBy == '-customer') {
-				if (a.customer.surname.toLowerCase() < b.customer.surname.toLowerCase()) {
+				if (a.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase() < b.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase()) {
 					return 1;
 				}
-				if (a.customer.surname.toLowerCase() > b.customer.surname.toLowerCase()) {
+				if (a.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase() > b.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase()) {
 					return -1;
 				}
 				return 0;
 			} else if (sortBy == 'products') {
 				return (
-					a.products.reduce((acc, product) => acc + product.quantity, 0) -
-					b.products.reduce((acc, product) => acc + product.quantity, 0)
+					a.Produkt.reduce((acc, product) => acc + product.quantity, 0) -
+					b.Produkt.reduce((acc, product) => acc + product.quantity, 0)
 				);
 			} else if (sortBy == '-products') {
 				return (
-					b.products.reduce((acc, product) => acc + product.quantity, 0) -
-					a.products.reduce((acc, product) => acc + product.quantity, 0)
+					b.Produkt.reduce((acc, product) => acc + product.quantity, 0) -
+					a.Produkt.reduce((acc, product) => acc + product.quantity, 0)
 				);
 			} else if (sortBy == 'date') {
-				return new Date(a.date).getTime() - new Date(b.date).getTime();
+				return new Date(a.DatumExpedicie).getTime() - new Date(b.DatumExpedicie).getTime();
 			} else if (sortBy == '-date') {
-				return new Date(b.date).getTime() - new Date(a.date).getTime();
+				return new Date(b.DatumExpedicie).getTime() - new Date(a.DatumExpedicie).getTime();
 			}
 			return 0;
 		});
@@ -491,14 +78,16 @@
 	let showTableCustomer = $state(true);
 	let showTableProducts = $state(true);
 	let showTableDate = $state(true);
+	let showTableExpeditionDate = $state(true);
 
 	let showCreateOrderDialog = $state(false);
 
 	function updateSearch() {
-		if (!search.trim().length) return (orders = dataa.orders);
+		if (!search.trim().length) return (orders = data.objednavky);
 		//Use Recursive Search
-		orders = dataa.orders.filter((order) => {
-			if (recursiveSearch(order, search)) return order;
+		if(!data.objednavky) return;
+		orders = data.objednavky.filter((order) => {
+			if (recursiveSearch(order.toJSON(), search)) return order;
 		});
 	}
 </script>
@@ -515,10 +104,10 @@
 		/>
 	</div>
 	<div
-		class="col-span-12 md:col-span-12 border rounded border-border-base bg-background-light-1 overflow-x-auto relative"
+		class="col-span-12 md:col-span-12 border rounded border-border-base bg-background-light-1 h-80 overflow-x-auto relative"
 	>
 		<div
-			class="flex items-center justify-between flex-auto w-full px-4 py-2 border-b border-b-background-dark-1 text-text-base bg-background-base sticky top-0 left-0 z-20"
+			class="flex items-center justify-between flex-auto w-full px-4 py-2 border-b border-b-background-dark-1 text-text-base bg-background-base sticky top-0 left-0 z-20 overflow-visible"
 		>
 			<h2>Moje objednávky</h2>
 			<div class="flex flex-row gap-2">
@@ -557,7 +146,7 @@
 					</div>
 					<div class="flex flex-col p-2">
 						<div class="flex flex-row items-center gap-2">
-							<Checkbox bind:checked={showTableDate} label="Dátum" id="tableDate" />
+							<Checkbox bind:checked={showTableDate} label="Dátum vytvorenia" id="tableDate" />
 						</div>
 					</div>
 				</Dropdown>
@@ -651,7 +240,7 @@
 							</button>
 						</th>
 					{/if}
-					{#if showTableDate}
+					{#if showTableExpeditionDate}
 						<th
 							transition:blur={{ duration: 500, easing: sineInOut }}
 							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -660,10 +249,35 @@
 							<button
 								class="w-full text-left uppercase flex flex-row gap-1 items-center"
 								onclick={() => {
+									sortBy == 'dateExpedition' ? (sortBy = '-dateExpedition') : (sortBy = 'dateExpedition');
+								}}
+							>
+								Dátum expedície
+								{#if sortBy == 'dateExpedition'}
+									<Icon scale="tiny">
+										<ChevronUp />
+									</Icon>
+								{:else if sortBy == '-dateExpedition'}
+									<Icon scale="tiny">
+										<ChevronDown />
+									</Icon>
+								{/if}
+							</button>
+						</th>
+					{/if}
+					{#if showTableDate}
+						<th
+							transition:blur={{ duration: 500, easing: sineInOut }}
+							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+							style="width: 15%;"
+						>
+							<button
+								class="w-full text-left uppercase flex flex-row gap-1 items-center"
+								onclick={() => {
 									sortBy == 'date' ? (sortBy = '-date') : (sortBy = 'date');
 								}}
 							>
-								Dátum
+								Vytvorené
 								{#if sortBy == 'date'}
 									<Icon scale="tiny">
 										<ChevronUp />
@@ -679,6 +293,16 @@
 				</tr>
 			</thead>
 			<tbody class="bg-white divide-y divide-gray-200">
+				{#if data.objednavky.length == 0}
+					<tr class="h-full">
+						<td
+							class="px-6 py-4 whitespace-nowrap text-text-light-3 h-full"
+							colspan="6"
+						>
+							Žiadne objednávky
+						</td>
+					</tr>
+				{:else}
 				{#key orders}
 					{#each orders as order, index}
 						<tr
@@ -690,7 +314,7 @@
 									transition:blur={{ duration: 500, easing: sineInOut }}
 									class="px-6 py-4 whitespace-nowrap text-text-light-3"
 								>
-									{dataa.orders.length - index}.
+									{data.objednavky.length - index}.
 								</td>
 							{/if}
 							{#if showTableID}
@@ -698,7 +322,7 @@
 									transition:blur={{ duration: 500, easing: sineInOut }}
 									class="px-6 py-4 whitespace-nowrap"
 								>
-									{order.id}
+									{order.ObjednavkaID}
 								</td>
 							{/if}
 							{#if showTableCustomer}
@@ -707,8 +331,7 @@
 									class="px-6 py-4 whitespace-nowrap"
 								>
 									<div class="text-sm font-medium text-gray-900">
-										{order.customer.name}
-										{order.customer.surname}
+										{order.zakaznik.Meno}
 									</div>
 								</td>
 							{/if}
@@ -718,10 +341,20 @@
 									class="px-6 py-4 whitespace-nowrap"
 								>
 									<ul>
-										{#each order.products as product}
+										{#each order.Produkt as product}
 											<li class="text-sm text-gray-900">{product.name} - {product.quantity}</li>
 										{/each}
 									</ul>
+								</td>
+							{/if}
+							{#if showTableExpeditionDate}
+								<td
+									transition:blur={{ duration: 500, easing: sineInOut }}
+									class="px-6 py-4 whitespace-nowrap"
+								>
+									<div class="text-sm text-gray-900">
+										{new Date(order.DatumExpedicie).toLocaleDateString('sk')}
+									</div>
 								</td>
 							{/if}
 							{#if showTableDate}
@@ -730,13 +363,14 @@
 									class="px-6 py-4 whitespace-nowrap"
 								>
 									<div class="text-sm text-gray-900">
-										{new Date(order.date).toLocaleDateString('sk')}
+										{new Date(order.created_at).toLocaleDateString('sk')}
 									</div>
 								</td>
 							{/if}
 						</tr>
 					{/each}
 				{/key}
+				{/if}
 			</tbody>
 		</table>
 	</div>
@@ -777,15 +411,7 @@
 			<div class="py-2 px-4">
 				<div class="flex flex-col gap-1 py-1">
 					<Label forInput="customer">Zákazník</Label>
-					<TextInput type="text" id="customer" name="customer" placeholder="Zákazník" />
-				</div>
-				<div class="flex flex-col gap-1 py-1">
-					<Label forInput="product">Produkt</Label>
-					<TextInput type="text" id="product" name="product" placeholder="Produkt" />
-				</div>
-				<div class="flex flex-col gap-1 py-1">
-					<Label forInput="quantity">Množstvo</Label>
-					<TextInput type="number" id="quantity" name="quantity" placeholder="Množstvo" />
+					<Combobox data={data.zakaznici} id="customer" name="customer" placeholder="Zákazník"/>
 				</div>
 			</div>
 		{:else}
@@ -800,7 +426,7 @@
 				</div>
 				<div class="flex flex-col gap-1 py-1">
 					<Label forInput="quantity">Množstvo</Label>
-					<TextInput type="number" id="quantity" name="quantity" placeholder="Množstvo" />
+					<NumberInput min={0} max={10} id="quantity" name="quantity" placeholder="Množstvo" />
 				</div>
 			</div>
 		{/if}

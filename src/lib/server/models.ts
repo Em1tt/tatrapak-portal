@@ -138,11 +138,11 @@ export class Objednavka extends Model<
 	declare PouzivatelID: number;
 
 	/** Defined by {@link Pouzivatel.objednavky} */
-	declare pouzivatel?: NonAttribute<Pouzivatel>;
+	declare pouzivatel: NonAttribute<Pouzivatel>;
 	declare getPouzivatel: BelongsToGetAssociationMixin<Pouzivatel>;
 
 	/** Defined by {@link Zakaznik.objednavky} */
-	declare zakaznik?: NonAttribute<Zakaznik>;
+	declare zakaznik: NonAttribute<Zakaznik>;
 	declare getZakaznik: BelongsToGetAssociationMixin<Zakaznik>;
 
 	@Attribute(DataTypes.JSON)
@@ -151,7 +151,7 @@ export class Objednavka extends Model<
 
 	@Attribute(DataTypes.DATE)
 	@NotNull
-	declare DatumExpedicie: CreationOptional<Date>;
+	declare DatumExpedicie: Date;
 
 	@Attribute(DataTypes.ENUM("prijata", "vo vyrobe", "expedovana"))
 	@NotNull
