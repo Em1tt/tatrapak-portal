@@ -23,6 +23,38 @@
 
 	let selectedValue = $state('selectCustomer');
 
+	let newData = {
+		orders: [
+			{
+				ObjednavkaID: 1,
+				ZakaznikID: 1,
+				PouzivatelID: 1,
+				Produkt: {},
+				DatumExpedicie: null,
+				Stav: 'prijata',
+				created_at: '2024-11-19T06:17:28.000Z',
+				updated_at: '2024-11-19T06:17:28.000Z',
+				zakaznik: {
+  "PouzivatelID": 1,
+  "Meno": "Samuel Neupauer",
+  "Email": "marcincak@proton.me",
+  "Rola": "obchodnik",
+  "Heslo": "$argon2id$v=19$m=19456,t=2,p=1$3DWOjQXQBhLMnLKzh6xG4w$oZRuVrJ5RQvda+hA/Rq3UYFc1OKV42ofqMHn125C480",
+  "created_at": "2024-11-15T06:21:54.000Z",
+  "updated_at": "2024-11-15T08:45:57.000Z"
+},
+				pouzivatel: {
+  "ZakaznikID": 1,
+  "Meno": "John Doe",
+  "Telefon": "421949060273",
+  "Email": "johndoe@test.com",
+  "created_at": "2024-11-19T06:15:55.000Z",
+  "updated_at": "2024-11-19T06:15:55.000Z"
+}
+			}
+		]
+	};
+
 	let dataa = {
 		orders: [
 			{
@@ -631,7 +663,7 @@
 									sortBy == 'date' ? (sortBy = '-date') : (sortBy = 'date');
 								}}
 							>
-								Date
+								Dátum
 								{#if sortBy == 'date'}
 									<Icon scale="tiny">
 										<ChevronUp />
@@ -644,18 +676,15 @@
 							</button>
 						</th>
 					{/if}
-					<th
-						class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-						style="width: 10%;"
-					>
-						Činnosť
-					</th>
 				</tr>
 			</thead>
 			<tbody class="bg-white divide-y divide-gray-200">
 				{#key orders}
 					{#each orders as order, index}
-						<tr class="hover:bg-background">
+						<tr
+							class="hover:bg-background cursor-pointer"
+							onclick={() => (showCreateOrderDialog = true)}
+						>
 							{#if showTableIndex}
 								<td
 									transition:blur={{ duration: 500, easing: sineInOut }}
@@ -705,12 +734,6 @@
 									</div>
 								</td>
 							{/if}
-							<td
-								transition:blur={{ duration: 500, easing: sineInOut }}
-								class="px-6 py-4 whitespace-nowrap text-sm font-medium"
-							>
-								<a href="/" class="text-indigo-600 hover:text-indigo-900">Zmeniť</a>
-							</td>
 						</tr>
 					{/each}
 				{/key}
