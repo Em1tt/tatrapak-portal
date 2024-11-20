@@ -17,7 +17,8 @@
 	import ChevronUp from '$lib/icons/ChevronUp.svelte';
 	import { dropDown, recursiveSearch } from '$lib/util/client';
 	import { sineInOut } from 'svelte/easing';
-	import { blur, fly } from 'svelte/transition';
+	import { blur } from 'svelte/transition';
+	import Trash from '$lib/icons/Trash.svelte';
 
 	const { data } = $props();
 	console.log(data);
@@ -25,7 +26,6 @@
 	let search: string = $state('');
 
 	let selectedValue = $state('selectCustomer');
-	let selectedValueProduct = $state('selectProduct');
 	let sortBy = $state('-date');
 
 	let orders = $state(data.objednavky);
@@ -35,25 +35,37 @@
 	$effect(() => {
 		query.set('sortBy', sortBy);
 		goto(`?${query.toString()}`);
-		if(!orders) return;
+		if (!orders) return;
 		orders = orders.sort((a, b) => {
 			if (sortBy == 'id') {
 				return a.ObjednavkaID - b.ObjednavkaID;
 			} else if (sortBy == '-id') {
 				return b.ObjednavkaID - a.ObjednavkaID;
 			} else if (sortBy == 'customer') {
-				if (a.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase() < b.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase()) {
+				if (
+					a.zakaznik.Meno.split(' ').slice(-1).join(' ').toLowerCase() <
+					b.zakaznik.Meno.split(' ').slice(-1).join(' ').toLowerCase()
+				) {
 					return -1;
 				}
-				if (a.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase() > b.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase()) {
+				if (
+					a.zakaznik.Meno.split(' ').slice(-1).join(' ').toLowerCase() >
+					b.zakaznik.Meno.split(' ').slice(-1).join(' ').toLowerCase()
+				) {
 					return 1;
 				}
 				return 0;
 			} else if (sortBy == '-customer') {
-				if (a.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase() < b.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase()) {
+				if (
+					a.zakaznik.Meno.split(' ').slice(-1).join(' ').toLowerCase() <
+					b.zakaznik.Meno.split(' ').slice(-1).join(' ').toLowerCase()
+				) {
 					return 1;
 				}
-				if (a.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase() > b.zakaznik.Meno.split(" ").slice(-1).join(" ").toLowerCase()) {
+				if (
+					a.zakaznik.Meno.split(' ').slice(-1).join(' ').toLowerCase() >
+					b.zakaznik.Meno.split(' ').slice(-1).join(' ').toLowerCase()
+				) {
 					return -1;
 				}
 				return 0;
@@ -87,10 +99,25 @@
 	function updateSearch() {
 		if (!search.trim().length) return (orders = data.objednavky);
 		//Use Recursive Search
-		if(!data.objednavky) return;
+		if (!data.objednavky) return;
 		orders = data.objednavky.filter((order) => {
 			if (recursiveSearch(order.toJSON(), search)) return order;
 		});
+	}
+
+	let productCountCreate = $state(1);
+	let selectedValueProducts: { [key: string]: any } = $state({
+		produkt0: 'selectProduct0'
+	});
+	function addProduct() {
+		productCountCreate += 1;
+		selectedValueProducts[`produkt${productCountCreate-1}`] = `selectProduct${productCountCreate-1}`;
+	}
+
+	function removeProduct() {
+		if (productCountCreate == 1) return;
+		productCountCreate -= 1;
+		delete selectedValueProducts[`produkt${productCountCreate + 1}`];
 	}
 </script>
 
@@ -148,7 +175,11 @@
 					</div>
 					<div class="flex flex-col p-2">
 						<div class="flex flex-row items-center gap-2">
-							<Checkbox bind:checked={showTableExpeditionDate} label="Dátum expedície" id="tableExpeditionDate" />
+							<Checkbox
+								bind:checked={showTableExpeditionDate}
+								label="Dátum expedície"
+								id="tableExpeditionDate"
+							/>
 						</div>
 					</div>
 					<div class="flex flex-col p-2">
@@ -256,7 +287,9 @@
 							<button
 								class="w-full text-left uppercase flex flex-row gap-1 items-center"
 								onclick={() => {
-									sortBy == 'dateExpedition' ? (sortBy = '-dateExpedition') : (sortBy = 'dateExpedition');
+									sortBy == 'dateExpedition'
+										? (sortBy = '-dateExpedition')
+										: (sortBy = 'dateExpedition');
 								}}
 							>
 								Dátum expedície
@@ -302,81 +335,78 @@
 			<tbody class="bg-white divide-y divide-gray-200">
 				{#if data.objednavky.length == 0}
 					<tr class="h-full">
-						<td
-							class="px-6 py-4 whitespace-nowrap text-text-light-3 h-full"
-							colspan="6"
-						>
+						<td class="px-6 py-4 whitespace-nowrap text-text-light-3 h-full" colspan="6">
 							Žiadne objednávky
 						</td>
 					</tr>
 				{:else}
-				{#key orders}
-					{#each orders as order, index}
-						<tr
-							class="hover:bg-background cursor-pointer"
-							onclick={() => (showCreateOrderDialog = true)}
-						>
-							{#if showTableIndex}
-								<td
-									transition:blur={{ duration: 500, easing: sineInOut }}
-									class="px-6 py-4 whitespace-nowrap text-text-light-3"
-								>
-									{data.objednavky.length - index}.
-								</td>
-							{/if}
-							{#if showTableID}
-								<td
-									transition:blur={{ duration: 500, easing: sineInOut }}
-									class="px-6 py-4 whitespace-nowrap"
-								>
-									{order.ObjednavkaID}
-								</td>
-							{/if}
-							{#if showTableCustomer}
-								<td
-									transition:blur={{ duration: 500, easing: sineInOut }}
-									class="px-6 py-4 whitespace-nowrap"
-								>
-									<div class="text-sm font-medium text-gray-900">
-										{order.zakaznik.Meno}
-									</div>
-								</td>
-							{/if}
-							{#if showTableProducts}
-								<td
-									transition:blur={{ duration: 500, easing: sineInOut }}
-									class="px-6 py-4 whitespace-nowrap"
-								>
-									<ul>
-										{#each order.Produkt as product}
-											<li class="text-sm text-gray-900">{product.name} - {product.quantity}</li>
-										{/each}
-									</ul>
-								</td>
-							{/if}
-							{#if showTableExpeditionDate}
-								<td
-									transition:blur={{ duration: 500, easing: sineInOut }}
-									class="px-6 py-4 whitespace-nowrap"
-								>
-									<div class="text-sm text-gray-900">
-										{new Date(order.DatumExpedicie).toLocaleDateString('sk')}
-									</div>
-								</td>
-							{/if}
-							{#if showTableDate}
-								<td
-									transition:blur={{ duration: 500, easing: sineInOut }}
-									class="px-6 py-4 whitespace-nowrap"
-								>
-									<div class="text-sm text-gray-900">
-										{new Date(order.created_at).toLocaleDateString('sk')}
-									</div>
-								</td>
-							{/if}
-						</tr>
-					{/each}
-				{/key}
+					{#key orders}
+						{#each orders as order, index}
+							<tr
+								class="hover:bg-background cursor-pointer"
+								onclick={() => (showCreateOrderDialog = true)}
+							>
+								{#if showTableIndex}
+									<td
+										transition:blur={{ duration: 500, easing: sineInOut }}
+										class="px-6 py-4 whitespace-nowrap text-text-light-3"
+									>
+										{data.objednavky.length - index}.
+									</td>
+								{/if}
+								{#if showTableID}
+									<td
+										transition:blur={{ duration: 500, easing: sineInOut }}
+										class="px-6 py-4 whitespace-nowrap"
+									>
+										{order.ObjednavkaID}
+									</td>
+								{/if}
+								{#if showTableCustomer}
+									<td
+										transition:blur={{ duration: 500, easing: sineInOut }}
+										class="px-6 py-4 whitespace-nowrap"
+									>
+										<div class="text-sm font-medium text-gray-900">
+											{order.zakaznik.Meno}
+										</div>
+									</td>
+								{/if}
+								{#if showTableProducts}
+									<td
+										transition:blur={{ duration: 500, easing: sineInOut }}
+										class="px-6 py-4 whitespace-nowrap"
+									>
+										<ul>
+											{#each order.Produkt as product}
+												<li class="text-sm text-gray-900">{product.name} - {product.quantity}</li>
+											{/each}
+										</ul>
+									</td>
+								{/if}
+								{#if showTableExpeditionDate}
+									<td
+										transition:blur={{ duration: 500, easing: sineInOut }}
+										class="px-6 py-4 whitespace-nowrap"
+									>
+										<div class="text-sm text-gray-900">
+											{new Date(order.DatumExpedicie).toLocaleDateString('sk')}
+										</div>
+									</td>
+								{/if}
+								{#if showTableDate}
+									<td
+										transition:blur={{ duration: 500, easing: sineInOut }}
+										class="px-6 py-4 whitespace-nowrap"
+									>
+										<div class="text-sm text-gray-900">
+											{new Date(order.created_at).toLocaleDateString('sk')}
+										</div>
+									</td>
+								{/if}
+							</tr>
+						{/each}
+					{/key}
 				{/if}
 			</tbody>
 		</table>
@@ -418,7 +448,12 @@
 			<div class="py-2 px-4">
 				<div class="flex flex-col gap-1 py-1">
 					<Label forInput="customer">Zákazník</Label>
-					<ComboboxZakaznik data={data.zakaznici} id="customer" name="customer" placeholder="Meno/E-mail/Telefónne číslo"/>
+					<ComboboxZakaznik
+						data={data.zakaznici}
+						id="customer"
+						name="customer"
+						placeholder="Meno/E-mail/Telefónne číslo"
+					/>
 				</div>
 			</div>
 		{:else}
@@ -429,65 +464,132 @@
 				</div>
 				<div class="flex flex-col gap-1 py-1">
 					<Label forInput="emailCustomer">E-mail zákazníka (nepovinné)</Label>
-					<TextInput type="email" id="emailCustomer" name="emailCustomer" placeholder="jozefmrkva@gmail.com" />
+					<TextInput
+						type="email"
+						id="emailCustomer"
+						name="emailCustomer"
+						placeholder="jozefmrkva@gmail.com"
+					/>
 				</div>
 				<div class="flex flex-col gap-1 py-1">
 					<Label forInput="emailCustomer">Telefón zákazníka (nepovinné)</Label>
-					<TextInput type="email" id="telephoneCustomer" name="telephoneCustomer" placeholder="0123 456 789" />
+					<TextInput
+						type="email"
+						id="telephoneCustomer"
+						name="telephoneCustomer"
+						placeholder="0123 456 789"
+					/>
 				</div>
 			</div>
 		{/if}
 	</form>
-	<hr class="bg-transparent border-background">
-	<div class="px-4 py-2">
-		<div class="flex flex-row flex-nowrap gap-4">
-			<div class="flex flex-row gap-1 py-1">
-				<Radio
-					label="select product"
-					id="selectProduct"
-					name="product"
-					value="selectProduct"
-					bind:group={selectedValueProduct}
-				/>
-				<Label forInput="selectProduct">Vybrať produkt</Label>
-			</div>
-			<div class="flex flex-row gap-1 py-1">
-				<Radio
-					label="create product"
-					id="createProduct"
-					name="product"
-					value="createProduct"
-					bind:group={selectedValueProduct}
-				/>
-				<Label forInput="createProduct">Vytvoriť produkt</Label>
-			</div>
-		</div>
-	</div>
+	<hr class="bg-transparent border-background" />
 	<form>
-		{#if selectedValueProduct == 'selectProduct'}
-			<div class="py-2 px-4 grid grid-cols-4 gap-2">
-				<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-3">
-					<Label forInput="product">Produkt</Label>
-					<ComboboxProdukt data={data.produkty} id="product" name="product" placeholder="Názov produktu"/>
-				</div>
-				<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-1">
-					<Label forInput="product">Množstvo</Label>
-					<NumberInput min={0} max={100000} id="quantityProduct" name="quantityProduct" placeholder="1" />
+		{#each Array(productCountCreate) as _, i}
+			<div class="px-4 py-2">
+				<div class="flex flex-row flex-nowrap gap-4">
+					<div class="flex flex-row gap-1 py-1">
+						<Radio
+							label="select product"
+							id="selectProduct{i}"
+							name="product{i}"
+							value="selectProduct{i}"
+							bind:group={selectedValueProducts['produkt' + i]}
+						/>
+						<Label forInput="selectProduct{i}">Vybrať produkt</Label>
+					</div>
+					<div class="flex flex-row gap-1 py-1">
+						<Radio
+							label="create product"
+							id="createProduct{i}"
+							name="product{i}"
+							value="createProduct{i}"
+							bind:group={selectedValueProducts['produkt' + i]}
+						/>
+						<Label forInput="createProduct{i}">Vytvoriť produkt</Label>
+					</div>
+					{#if i != 0}
+					<div class="flex flex-row gap-1 py-1 ml-auto">
+						<Button style="danger" textStyle="default" onclick={() => {removeProduct()}}>
+							<Icon scale="small">
+								<Trash />
+							</Icon>
+						</Button>
+					</div>
+					{/if}
 				</div>
 			</div>
-		{:else}
-			<div class="py-2 px-4">
-				<div class="flex flex-col gap-1">
-					<Label forInput="nameProduct">Názov produktu</Label>
-					<TextInput type="text" id="nameProduct" name="nameProduct" placeholder="Jablko" />
+			{#if selectedValueProducts['produkt' + i] == `selectProduct${i}`}
+				<div class="py-2 px-4 grid grid-cols-4 gap-2">
+					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-3">
+						<Label forInput="product{i}">Produkt</Label>
+						<ComboboxProdukt
+							data={data.produkty}
+							id="product{i}"
+							name="product{i}"
+							placeholder="Názov / K.č."
+						/>
+					</div>
+					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-1">
+						<Label forInput="product{i}">Množstvo</Label>
+						<NumberInput
+							min={0}
+							max={100000}
+							id="quantityProduct{i}"
+							name="quantityProduct{i}"
+							placeholder="1"
+						/>
+					</div>
 				</div>
-				<div class="flex flex-col gap-1 py-1">
-					<Label forInput="quantityProduct">Množstvo produktu</Label>
-					<NumberInput min={0} max={100000} id="quantityProduct" name="quantityProduct" placeholder="1" />
+			{:else}
+				<div class="py-2 px-4 grid grid-cols-4 gap-x-2">
+					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-3">
+						<Label forInput="nameProduct{i}">Názov produktu</Label>
+						<TextInput type="text" id="nameProduct{i}" name="nameProduct{i}" placeholder="Jablko" />
+					</div>
+					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-1">
+						<Label forInput="catalogNumberProduct{i}">Katalógové číslo</Label>
+						<TextInput
+							type="text"
+							id="catalogNumberProduct{i}"
+							name="catalogNumberProduct{i}"
+							placeholder="0000/0"
+						/>
+					</div>
+					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-2">
+						<Label forInput="priceProduct{i}">Cena/ks (€) (nepovinné)</Label>
+						<NumberInput
+							step="0.001"
+							min={0}
+							max={1000}
+							id="priceProduct{i}"
+							name="priceProduct{i}"
+							placeholder="0.000"
+						/>
+					</div>
+					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-2">
+						<Label forInput="weightProduct{i}">Hmotnosť (g)</Label>
+						<NumberInput
+							step="0.1"
+							min={0}
+							max={10000}
+							id="weightProduct{i}"
+							name="weightProduct{i}"
+							placeholder="4.5"
+						/>
+					</div>
 				</div>
-			</div>
-		{/if}
+			{/if}
+			<hr class="bg-transparent border-background" />
+		{/each}
 		<div class="px-4 py-2">
+			<div class="flex flex-col">
+				<Button style="secondary" textStyle="default" onclick={addProduct}>
+					<div class="flex flex-row flex-nowrap justify-center items-center w-full gap-2">
+						<p class="w-80">Pridať produkt</p>
+					</div>
+				</Button>
+			</div>
 			<div class="flex flex-col gap-1 py-1">
 				<Label forInput="password">Password</Label>
 				<TextInput type="password" id="password" name="password" placeholder="Password" />

@@ -6,7 +6,8 @@
 		min,
 		max,
 		onchange = () => {},
-		value = $bindable()
+		value = $bindable(),
+		step = "any"
 	}: {
 		placeholder?: string;
 		id: string;
@@ -15,6 +16,7 @@
 		max: number;
 		onchange?: () => void;
 		value?: string;
+		step?: string
 	} = $props();
 
 	let input: HTMLInputElement;
@@ -33,6 +35,7 @@
 	bind:this={input}
 	{min}
 	{max}
+	{step}
 	type="number"
 	{id}
 	{name}
