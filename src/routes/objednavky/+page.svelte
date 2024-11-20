@@ -105,19 +105,23 @@
 		});
 	}
 
-	let productCountCreate = $state(1);
+	let productIDs = $state([0]);
 	let selectedValueProducts: { [key: string]: any } = $state({
 		produkt0: 'selectProduct0'
 	});
 	function addProduct() {
-		productCountCreate += 1;
-		selectedValueProducts[`produkt${productCountCreate-1}`] = `selectProduct${productCountCreate-1}`;
+		let i = 0;
+		while (productIDs.includes(i)) i++;
+		productIDs.push(i);
+		selectedValueProducts[`produkt${i}`] = `selectProduct${i}`;
 	}
 
+	$inspect(productIDs);
+
 	function removeProduct() {
-		if (productCountCreate == 1) return;
-		productCountCreate -= 1;
-		delete selectedValueProducts[`produkt${productCountCreate + 1}`];
+		if (productIDs.length == 1) return;
+		productIDs.pop();
+		delete selectedValueProducts[`produkt${productIDs.length+1}`];
 	}
 </script>
 
@@ -457,12 +461,12 @@
 				</div>
 			</div>
 		{:else}
-			<div class="py-2 px-4">
-				<div class="flex flex-col gap-1">
+			<div class="py-2 px-4 grid grid-cols-2 gap-x-2">
+				<div class="flex flex-col gap-1 col-span-2">
 					<Label forInput="nameCustomer">Meno zákazníka</Label>
 					<TextInput type="text" id="nameCustomer" name="nameCustomer" placeholder="Jozef Mrkva" />
 				</div>
-				<div class="flex flex-col gap-1 py-1">
+				<div class="flex flex-col gap-1 py-1 col-span-2 sm:col-span-1">
 					<Label forInput="emailCustomer">E-mail zákazníka (nepovinné)</Label>
 					<TextInput
 						type="email"
@@ -471,7 +475,7 @@
 						placeholder="jozefmrkva@gmail.com"
 					/>
 				</div>
-				<div class="flex flex-col gap-1 py-1">
+				<div class="flex flex-col gap-1 py-1 col-span-2 sm:col-span-1">
 					<Label forInput="emailCustomer">Telefón zákazníka (nepovinné)</Label>
 					<TextInput
 						type="email"
@@ -485,97 +489,98 @@
 	</form>
 	<hr class="bg-transparent border-background" />
 	<form>
-		{#each Array(productCountCreate) as _, i}
+		{#each productIDs as productID}
 			<div class="px-4 py-2">
 				<div class="flex flex-row flex-nowrap gap-4">
 					<div class="flex flex-row gap-1 py-1">
 						<Radio
 							label="select product"
-							id="selectProduct{i}"
-							name="product{i}"
-							value="selectProduct{i}"
-							bind:group={selectedValueProducts['produkt' + i]}
+							id="selectProduct{productID}"
+							name="product{productID}"
+							value="selectProduct{productID}"
+							bind:group={selectedValueProducts['produkt' + productID]}
 						/>
-						<Label forInput="selectProduct{i}">Vybrať produkt</Label>
+						<Label forInput="selectProduct{productID}">Vybrať produkt</Label>
 					</div>
 					<div class="flex flex-row gap-1 py-1">
 						<Radio
 							label="create product"
-							id="createProduct{i}"
-							name="product{i}"
-							value="createProduct{i}"
-							bind:group={selectedValueProducts['produkt' + i]}
+							id="createProduct{productID}"
+							name="product{productID}"
+							value="createProduct{productID}"
+							bind:group={selectedValueProducts['produkt' + productID]}
 						/>
-						<Label forInput="createProduct{i}">Vytvoriť produkt</Label>
+						<Label forInput="createProduct{productID}">Vytvoriť produkt</Label>
 					</div>
-					{#if i != 0}
-					<div class="flex flex-row gap-1 py-1 ml-auto">
-						<Button style="danger" textStyle="default" onclick={() => {removeProduct()}}>
-							<Icon scale="small">
-								<Trash />
-							</Icon>
-						</Button>
-					</div>
-					{/if}
 				</div>
 			</div>
-			{#if selectedValueProducts['produkt' + i] == `selectProduct${i}`}
+			{#if selectedValueProducts['produkt' + productID] == `selectProduct${productID}`}
 				<div class="py-2 px-4 grid grid-cols-4 gap-2">
 					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-3">
-						<Label forInput="product{i}">Produkt</Label>
+						<Label forInput="product{productID}">Produkt</Label>
 						<ComboboxProdukt
 							data={data.produkty}
-							id="product{i}"
-							name="product{i}"
+							id="product{productID}"
+							name="product{productID}"
 							placeholder="Názov / K.č."
 						/>
 					</div>
 					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-1">
-						<Label forInput="product{i}">Množstvo</Label>
+						<Label forInput="product{productID}">Množstvo</Label>
 						<NumberInput
 							min={0}
 							max={100000}
-							id="quantityProduct{i}"
-							name="quantityProduct{i}"
+							id="quantityProduct{productID}"
+							name="quantityProduct{productID}"
 							placeholder="1"
 						/>
 					</div>
 				</div>
 			{:else}
-				<div class="py-2 px-4 grid grid-cols-4 gap-x-2">
-					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-3">
-						<Label forInput="nameProduct{i}">Názov produktu</Label>
-						<TextInput type="text" id="nameProduct{i}" name="nameProduct{i}" placeholder="Jablko" />
+				<div class="py-2 px-4 grid grid-cols-12 gap-x-2">
+					<div class="flex flex-col gap-1 py-1 col-span-12 sm:col-span-6">
+						<Label forInput="nameProduct{productID}">Názov produktu</Label>
+						<TextInput type="text" id="nameProduct{productID}" name="nameProduct{productID}" placeholder="Jablko" />
 					</div>
-					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-1">
-						<Label forInput="catalogNumberProduct{i}">Katalógové číslo</Label>
+					<div class="flex flex-col gap-1 py-1 col-span-12 sm:col-span-6">
+						<Label forInput="catalogNumberProduct{productID}">Katalógové číslo</Label>
 						<TextInput
 							type="text"
-							id="catalogNumberProduct{i}"
-							name="catalogNumberProduct{i}"
+							id="catalogNumberProduct{productID}"
+							name="catalogNumberProduct{productID}"
 							placeholder="0000/0"
 						/>
 					</div>
-					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-2">
-						<Label forInput="priceProduct{i}">Cena/ks (€) (nepovinné)</Label>
+					<div class="flex flex-col gap-1 py-1 col-span-12 sm:col-span-4">
+						<Label forInput="priceProduct{productID}">Cena/ks (€) (nepovinné)</Label>
 						<NumberInput
 							step="0.001"
 							min={0}
 							max={1000}
-							id="priceProduct{i}"
-							name="priceProduct{i}"
+							id="priceProduct{productID}"
+							name="priceProduct{productID}"
 							placeholder="0.000"
 						/>
 					</div>
-					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-2">
-						<Label forInput="weightProduct{i}">Hmotnosť (g)</Label>
+					<div class="flex flex-col gap-1 py-1 col-span-6 sm:col-span-4">
+						<Label forInput="weightProduct{productID}">Hmotnosť (g)</Label>
 						<NumberInput
 							step="0.1"
 							min={0}
 							max={10000}
-							id="weightProduct{i}"
-							name="weightProduct{i}"
+							id="weightProduct{productID}"
+							name="weightProduct{productID}"
 							placeholder="4.5"
+						/>
+					</div>
+					<div class="flex flex-col gap-1 py-1 col-span-6 sm:col-span-4">
+						<Label forInput="product{productID}">Množstvo</Label>
+						<NumberInput
+							min={0}
+							max={100000}
+							id="quantityProduct{productID}"
+							name="quantityProduct{productID}"
+							placeholder="1"
 						/>
 					</div>
 				</div>
@@ -583,16 +588,19 @@
 			<hr class="bg-transparent border-background" />
 		{/each}
 		<div class="px-4 py-2">
-			<div class="flex flex-col">
-				<Button style="secondary" textStyle="default" onclick={addProduct}>
+			<div class="flex {productIDs.length > 1 ? "flex-row" : "flex-col"} gap-2">
+				<Button type="button" style="secondary" textStyle="default" onclick={addProduct}>
 					<div class="flex flex-row flex-nowrap justify-center items-center w-full gap-2">
 						<p class="w-80">Pridať produkt</p>
 					</div>
 				</Button>
-			</div>
-			<div class="flex flex-col gap-1 py-1">
-				<Label forInput="password">Password</Label>
-				<TextInput type="password" id="password" name="password" placeholder="Password" />
+				{#if productIDs.length > 1}
+				<Button type="button" style="danger" textStyle="default" onclick={removeProduct}>
+					<div class="flex flex-row flex-nowrap justify-center items-center w-full gap-2">
+						<p class="w-80">Odstrániť produkt</p>
+					</div>
+				</Button>
+				{/if}
 			</div>
 		</div>
 		<div class="flex justify-between w-full px-4 py-2 border-t border-slate-400/30">
