@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Button from '$lib/components/Button.svelte';
 	import Dialog from '$lib/components/Dialog.svelte';
@@ -18,10 +18,10 @@
 	import { dropDown, recursiveSearch } from '$lib/util/client';
 	import { sineInOut } from 'svelte/easing';
 	import { blur } from 'svelte/transition';
-	import Trash from '$lib/icons/Trash.svelte';
+	import { applyAction, enhance } from '$app/forms';
+	import { writable, type Writable } from 'svelte/store';
 
 	const { data } = $props();
-	console.log(data);
 
 	let search: string = $state('');
 
@@ -123,6 +123,9 @@
 		productIDs.pop();
 		delete selectedValueProducts[`produkt${productIDs.length+1}`];
 	}
+
+	let validate: Writable<string[]> = writable([]);
+	let productError: string | unknown = $state('');
 </script>
 
 <div class="grid grid-cols-12 px-2 pt-12 mx-auto max-w-7xl gap-2">
@@ -488,7 +491,22 @@
 		{/if}
 	</form>
 	<hr class="bg-transparent border-background" />
-	<form>
+	<form method="POST" action="/objednavky?/createOrder" use:enhance={() => {
+		return async ({ result, formData }) => {
+			
+			// `result` is an `ActionResult` object
+			if (result.type === 'failure') {
+				productError = result.data?.message;
+				Array.isArray(result.data?.validate) && validate.set(result.data?.validate);
+				console.error(result);
+				console.log($validate);
+			} else {
+				await invalidateAll();
+				showCreateOrderDialog = false;
+				await applyAction(result);
+			}
+		};
+	}}>
 		{#each productIDs as productID}
 			<div class="px-4 py-2">
 				<div class="flex flex-row flex-nowrap gap-4">
@@ -607,6 +625,7 @@
 			<Button onclick={() => (showCreateOrderDialog = false)} type="reset" style="opaque"
 				>Zrušiť</Button
 			>
+			<Button style="primary" type="submit">Prihlásiť sa</Button>
 		</div>
 	</form>
 </Dialog>

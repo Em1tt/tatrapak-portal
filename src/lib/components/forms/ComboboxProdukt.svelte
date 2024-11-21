@@ -27,10 +27,6 @@
 	);
 
 	$effect(() => {
-		console.log(query);
-	});
-
-	$effect(() => {
 		if (reportedValue) {
 			value = reportedValue;
 		}
