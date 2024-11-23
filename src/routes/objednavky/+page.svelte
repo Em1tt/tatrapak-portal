@@ -101,7 +101,8 @@
 		//Use Recursive Search
 		if (!data.objednavky) return;
 		orders = data.objednavky.filter((order) => {
-			if (recursiveSearch(order.toJSON(), search)) return order;
+			console.log(order);
+			if (recursiveSearch(JSON.parse(JSON.stringify(order)), search)) return order;
 		});
 	}
 
@@ -109,14 +110,13 @@
 	let selectedValueProducts: { [key: string]: any } = $state({
 		produkt0: 'selectProduct0'
 	});
+
 	function addProduct() {
 		let i = 0;
 		while (productIDs.includes(i)) i++;
 		productIDs.push(i);
 		selectedValueProducts[`produkt${i}`] = `selectProduct${i}`;
 	}
-
-	$inspect(productIDs);
 
 	function removeProduct() {
 		if (productIDs.length == 1) return;
@@ -150,6 +150,7 @@
 				<Dropdown justify="right" id="tableSettings">
 					{#snippet button(name = 'tableSettings')}
 						<Button
+							type="button"
 							style="opaque"
 							onclick={() => {
 								$dropDown == name ? dropDown.set('') : dropDown.set(name);
@@ -195,7 +196,7 @@
 						</div>
 					</div>
 				</Dropdown>
-				<Button onclick={() => (showCreateOrderDialog = true)} style="primary"
+				<Button type="button" onclick={() => (showCreateOrderDialog = true)} style="primary"
 					>Vytvoriť objednávku</Button
 				>
 			</div>
@@ -217,6 +218,7 @@
 							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 						>
 							<button
+								type="button"
 								class="w-full text-left uppercase flex flex-row gap-1 items-center"
 								onclick={() => {
 									sortBy == 'id' ? (sortBy = '-id') : (sortBy = 'id');
@@ -242,6 +244,7 @@
 							style="width: 20%;"
 						>
 							<button
+							type="button"
 								class="w-full text-left uppercase flex flex-row gap-1 items-center"
 								onclick={() => {
 									sortBy == 'customer' ? (sortBy = '-customer') : (sortBy = 'customer');
@@ -267,6 +270,8 @@
 							style="width: 50%;"
 						>
 							<button
+							type="button"
+
 								class="w-full text-left uppercase flex flex-row gap-1 items-center"
 								onclick={() => {
 									sortBy == 'products' ? (sortBy = '-products') : (sortBy = 'products');
@@ -292,6 +297,8 @@
 							style="width: 20%;"
 						>
 							<button
+							type="button"
+
 								class="w-full text-left uppercase flex flex-row gap-1 items-center"
 								onclick={() => {
 									sortBy == 'dateExpedition'
@@ -319,6 +326,8 @@
 							style="width: 15%;"
 						>
 							<button
+							type="button"
+
 								class="w-full text-left uppercase flex flex-row gap-1 items-center"
 								onclick={() => {
 									sortBy == 'date' ? (sortBy = '-date') : (sortBy = 'date');
@@ -424,6 +433,21 @@
 	{#snippet header()}
 		Vytvoriť objednávku
 	{/snippet}
+	<form method="POST" action="/objednavky?/createOrder" use:enhance={async () => {
+		return async ({ result }) => {
+			// `result` is an `ActionResult` object
+			if (result.type === 'failure') {
+				productError = result.data?.message;
+				Array.isArray(result.data?.validate) && validate.set(result.data?.validate);
+				console.error(result);
+				console.log($validate);
+			} else {
+				await invalidateAll();
+				showCreateOrderDialog = false;
+				await applyAction(result);
+			}
+		};
+	}}>
 	<div>
 		<div class="px-4 py-2">
 			<div class="flex flex-row flex-nowrap gap-4">
@@ -431,7 +455,7 @@
 					<Radio
 						label="select customer"
 						id="selectCustomer"
-						name="customer"
+						name="customer_type"
 						value="selectCustomer"
 						bind:group={selectedValue}
 					/>
@@ -441,7 +465,7 @@
 					<Radio
 						label="create customer"
 						id="createCustomer"
-						name="customer"
+						name="customer_type"
 						value="createCustomer"
 						bind:group={selectedValue}
 					/>
@@ -450,7 +474,6 @@
 			</div>
 		</div>
 	</div>
-	<form>
 		{#if selectedValue == 'selectCustomer'}
 			<div class="py-2 px-4">
 				<div class="flex flex-col gap-1 py-1">
@@ -481,7 +504,7 @@
 				<div class="flex flex-col gap-1 py-1 col-span-2 sm:col-span-1">
 					<Label forInput="emailCustomer">Telefón zákazníka (nepovinné)</Label>
 					<TextInput
-						type="email"
+						type="text"
 						id="telephoneCustomer"
 						name="telephoneCustomer"
 						placeholder="0123 456 789"
@@ -489,24 +512,7 @@
 				</div>
 			</div>
 		{/if}
-	</form>
 	<hr class="bg-transparent border-background" />
-	<form method="POST" action="/objednavky?/createOrder" use:enhance={() => {
-		return async ({ result, formData }) => {
-			
-			// `result` is an `ActionResult` object
-			if (result.type === 'failure') {
-				productError = result.data?.message;
-				Array.isArray(result.data?.validate) && validate.set(result.data?.validate);
-				console.error(result);
-				console.log($validate);
-			} else {
-				await invalidateAll();
-				showCreateOrderDialog = false;
-				await applyAction(result);
-			}
-		};
-	}}>
 		{#each productIDs as productID}
 			<div class="px-4 py-2">
 				<div class="flex flex-row flex-nowrap gap-4">
@@ -514,7 +520,7 @@
 						<Radio
 							label="select product"
 							id="selectProduct{productID}"
-							name="product{productID}"
+							name="product{productID}_type"
 							value="selectProduct{productID}"
 							bind:group={selectedValueProducts['produkt' + productID]}
 						/>
@@ -524,7 +530,7 @@
 						<Radio
 							label="create product"
 							id="createProduct{productID}"
-							name="product{productID}"
+							name="product{productID}_type"
 							value="createProduct{productID}"
 							bind:group={selectedValueProducts['produkt' + productID]}
 						/>
@@ -546,7 +552,7 @@
 					<div class="flex flex-col gap-1 py-1 col-span-4 sm:col-span-1">
 						<Label forInput="product{productID}">Množstvo</Label>
 						<NumberInput
-							min={0}
+							min={1}
 							max={100000}
 							id="quantityProduct{productID}"
 							name="quantityProduct{productID}"
@@ -584,7 +590,7 @@
 						<Label forInput="weightProduct{productID}">Hmotnosť (g)</Label>
 						<NumberInput
 							step="0.1"
-							min={0}
+							min={1}
 							max={10000}
 							id="weightProduct{productID}"
 							name="weightProduct{productID}"
@@ -625,7 +631,7 @@
 			<Button onclick={() => (showCreateOrderDialog = false)} type="reset" style="opaque"
 				>Zrušiť</Button
 			>
-			<Button style="primary" type="submit">Prihlásiť sa</Button>
+			<Button style="primary" type="submit">Vytvoriť objednávku</Button>
 		</div>
 	</form>
 </Dialog>

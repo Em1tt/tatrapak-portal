@@ -25,6 +25,7 @@
 
 <input bind:group {name} {id} type="radio" class="peer hidden" {value} {disabled} />
 <button
+	type="button"
 	aria-label={label}
 	onclick={() => {
         group = value;

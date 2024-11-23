@@ -153,14 +153,13 @@ export class Objednavka extends Model<
 
 	@Attribute(DataTypes.JSON)
 	@NotNull
-	declare Produkt: Array<{ id: string; name: string; quantity: number }>;
+	declare Produkt: Array<{ id: number; name: string; quantity: number }>;
 
 	@Attribute(DataTypes.DATE)
 	@NotNull
 	declare DatumExpedicie: Date;
 
 	@Attribute(DataTypes.ENUM('prijata', 'vo vyrobe', 'expedovana'))
-	@NotNull
 	declare Stav: CreationOptional<'prijata' | 'vo vyrobe' | 'expedovana'>;
 
 	@CreatedAt
@@ -170,7 +169,7 @@ export class Objednavka extends Model<
 	declare updated_at: CreationOptional<Date>;
 
 	// Custom validation to ensure the id within the JSON references a valid Produkt
-    static async validateProdukty(produkty: Array<{ id: string; name: string; quantity: number }>) {
+    static async validateProdukty(produkty: Array<{ id: number; quantity: number }>) {
         for (const produkt of produkty) {
             const exists = await Produkt.findByPk(produkt.id);
             if (!exists) {
