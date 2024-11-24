@@ -29,6 +29,11 @@ export const actions = {
 			await user.destroy();
 			return {success: true, message: "Používateľ bol vymazaný."};
 		}
+		if(locals.user.Rola != "spravca"){
+			return fail(403, {
+				message: 'Nemáte oprávnenie'
+			});
+		}
 		const name = formData.get('name');
 		const email = formData.get('email');
 		const rola = formData.get('rola');

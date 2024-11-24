@@ -193,7 +193,7 @@
 		<TextInput
 			bind:value={search}
 			onchange={updateSearch}
-			placeholder="Nájdi objednávku"
+			placeholder="Nájdi používateľa"
 			type="text"
 			id="search"
 			name="search"
@@ -257,6 +257,7 @@
 						</div>
 					</div>
 				</Dropdown>
+				{#if data.pouzivatel.Rola == 'spravca'}
 				<Button
 					type="button"
 					onclick={() => {
@@ -265,6 +266,7 @@
 					}}
 					style="primary">Vytvoriť používateľa</Button
 				>
+				{/if}
 			</div>
 		</div>
 		<table class="min-w-full divide-y divide-gray-200 w-full overflow-x-auto">
