@@ -9,7 +9,8 @@
 		placeholder,
 		data,
 		reportedValue = $bindable(),
-		actualValue = $bindable()
+		actualValue = $bindable(),
+		disabled = false
 	}: {
 		id: string;
 		name: string;
@@ -17,6 +18,7 @@
 		data: Zakaznik[];
 		reportedValue?: string;
 		actualValue?: number;
+		disabled?: boolean;
 	} = $props();
 	let value = $state('');
 
@@ -31,10 +33,14 @@
 			value = reportedValue;
 		}
 	});
+
+	function removeValidation() {
+		(document.getElementById(id) as HTMLInputElement).setCustomValidity('');
+	}
 </script>
 
 <div class="relative">
-	<TextInput bind:value type="text" {id} {name} {placeholder} isPeer={true}></TextInput>
+	<TextInput {disabled} onchange={() => {actualValue = undefined;}} bind:value type="text" {id} {name} {placeholder} isPeer={true}></TextInput>
 	<input type="text" id="{id}_val" bind:value={actualValue} name="{id}_val" class="hidden">
 	<div
 		class="absolute overflow-auto top-full hidden hover:block peer-focus:block left-0 max-h-60 w-full min-w-40 max-w-80 bg-background border border-border-base z-40 rotate-0 rounded"
@@ -44,6 +50,8 @@
 				{#each query as item}
 					<Button
 						onclick={() => {
+							removeValidation();
+							value = item.Meno;
 							reportedValue = item.Meno;
 							actualValue = item.ZakaznikID;
 						}}

@@ -48,6 +48,6 @@ export const actions = {
 		const session = await createSession(token, user.PouzivatelID);
 		setSessionTokenCookie(cookies, token, session.expires_at);
 
-		return {};
+		return {success: true};
 	}
 } satisfies Actions;

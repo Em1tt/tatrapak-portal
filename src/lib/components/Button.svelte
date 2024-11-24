@@ -8,7 +8,10 @@
 		shrink = true,
 		type = 'button',
 		onclick = () => {},
-		isRelative = false
+		isRelative = false,
+		disabled = false,
+		name,
+		value
 	}: {
 		children: Snippet;
 		style: 'primary' | 'secondary' | 'opaque' | 'warning' | 'danger';
@@ -17,6 +20,9 @@
 		type?: 'button' | 'submit' | 'reset';
 		onclick?: () => void;
 		isRelative?: boolean;
+		disabled?: boolean;
+		name?: string;
+		value?: string;
 	} = $props();
 
 	let button: HTMLButtonElement;
@@ -53,6 +59,9 @@
 
 <button
 	{type}
+	{name}
+	{value}
+	{disabled}
 	{onclick}
 	bind:this={button}
 	{onmousedown}
@@ -71,15 +80,15 @@
 						? "text-danger-dark-1"
 						: ""}
 	{style == 'primary'
-		? 'bg-primary-base hover:bg-primary-light-1 border-primary-dark-1/30'
+		? 'bg-primary-base hover:bg-primary-light-1 border-primary-dark-1/30 disabled:bg-primary-base/50'
 		: style == 'secondary'
-			? 'bg-secondary-base hover:bg-secondary-light-1 border-secondary-dark-1/30'
+			? 'bg-secondary-base hover:bg-secondary-light-1 border-secondary-dark-1/30  disabled:bg-secondary-base/50'
 			: style == 'opaque'
-				? 'hover:bg-background-dark-2/50 border-opacity-0'
+				? 'hover:bg-background-dark-2/50 border-opacity-0 disabled:bg-background-dark-1/50'
 				: style == 'warning'
-					? 'bg-warning-base hover:bg-warning-light-1 border-warning-dark-1/30'
+					? 'bg-warning-base hover:bg-warning-light-1 border-warning-dark-1/30 disabled:bg-warning-base/50'
 					: style == 'danger'
-						? 'bg-danger-base hover:bg-danger-light-1 border-danger-dark-1/30'
+						? 'bg-danger-base hover:bg-danger-light-1 border-danger-dark-1/30 disabled:bg-danger-base/50'
 						: ''}"
 >
 	<div

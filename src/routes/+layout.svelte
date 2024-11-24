@@ -1,18 +1,20 @@
 <script lang="ts">
 	import Navbar from '$lib/components/Navbar.svelte';
-import '../app.css';
+	import '../app.css';
+	import { Toaster } from 'svelte-french-toast';
 
 	let { children, data } = $props();
-	console.log(data);
 </script>
 
+<Toaster toastOptions={{ className: 'toast', position: 'bottom-right' }} />
+
 <div class="{data.theme} bg-background min-h-screen py-20">
-	<Navbar user={data.user}/>
+	<Navbar user={data.user} />
 	{@render children()}
 </div>
 
-<style>
-	.randomClass {
-		color: hsl(116, 100%, 43%);
+<style lang="postcss">
+	:global(.toast) {
+		@apply !border-slate-400/30 !border !bg-slate-100 !shadow-none hover:!bg-slate-50 !text-xs;
 	}
 </style>

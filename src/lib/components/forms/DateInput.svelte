@@ -1,6 +1,5 @@
 <script lang="ts">
 	let {
-		type,
 		placeholder,
 		id,
 		name,
@@ -9,14 +8,13 @@
 		isPeer = false,
 		disabled = false
 	}: {
-		type: 'email' | 'password' | 'text';
 		placeholder?: string;
 		id: string;
 		name: string;
 		onchange?: () => void;
 		value?: string;
 		isPeer?: boolean;
-		disabled?: boolean
+		disabled?: boolean;
 	} = $props();
 
 	let input: HTMLInputElement;
@@ -27,14 +25,14 @@
 </script>
 
 <input
+	{disabled}
 	onchange={() => {
 		onchange();
 		removeValidation();
 	}}
 	bind:value
 	bind:this={input}
-	{disabled}
-	{type}
+	type="date"
 	{id}
 	{name}
 	{placeholder}
@@ -48,7 +46,7 @@
 	}}
 	bind:value
 	bind:this={input}
-	{type}
+	type="date"
 	{id}
 	{name}
 	{placeholder}

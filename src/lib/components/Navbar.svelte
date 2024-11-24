@@ -16,26 +16,22 @@
 	import { writable, type Writable } from 'svelte/store';
 	import { invalidateAll } from '$app/navigation';
 	import type { Pouzivatel } from '$lib/server/models';
+	import toast from 'svelte-french-toast';
 
 	let open = $state(false);
 
-	let { user }: { user?: Pouzivatel } = $props();
+	let { user }: { user?: Pouzivatel | null } = $props();
 
 	let loginError: string | unknown = $state('');
-	let validate: Writable<string[]> = writable([]);
+	let validate: string[] = $state([]);
 
-	let destroy: (() => void) | undefined;
-
-	onDestroy(() => {
-		destroy?.();
+	$effect(() => {
+		validate.forEach((i) => {
+			(document.getElementById(i) as HTMLInputElement).setCustomValidity('Chybné pole');
+		});
 	});
 
 	onMount(() => {
-		destroy = validate.subscribe((value) => {
-			$validate.forEach((i) => {
-				(document.getElementById(i) as HTMLInputElement).setCustomValidity('Chybné pole');
-			});
-		});
 		document.addEventListener('click', (e) => {
 			if (!(e.target as HTMLDivElement).closest('.dropdown')) {
 				dropDown.set('');
@@ -47,7 +43,7 @@
 <div class="flex flex-col w-full border border-b-border-base bg-background fixed top-0 left-0 z-40">
 	<div class="w-full border-b border-b-border-base">
 		<div class="flex flex-row items-center justify-between w-full px-2 py-1 mx-auto max-w-7xl">
-			<a href="/">
+			<a href="/" class="hidden sm:block">
 				<img src="/tatrapak.png" alt="Tatrapak logo" width="120" />
 			</a>
 			{#if user}
@@ -115,11 +111,14 @@
 					// `result` is an `ActionResult` object
 					if (result.type === 'failure') {
 						loginError = result.data?.message;
-						Array.isArray(result.data?.validate) && validate.set(result.data?.validate);
+						if (Array.isArray(result.data?.validate)) validate = result.data?.validate;
 						console.error(result);
-						console.log($validate);
 					} else {
 						await invalidateAll();
+						toast.success('Úspešne ste sa prihlásili.', {
+							duration: 3000,
+							position: 'bottom-right'
+						});
 						open = false;
 						await applyAction(result);
 					}

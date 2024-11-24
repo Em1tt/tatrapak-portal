@@ -47,6 +47,7 @@
 		"@sveltejs/adapter-node": "^5.2.9",
 		"sequelize": "^6.37.5",
 		"sqlite3": "^5.1.7",
-		"svelte-debounce": "^0.0.3"
+		"svelte-debounce": "^0.0.3",
+		"svelte-french-toast": "^1.2.0"
 	}
 }

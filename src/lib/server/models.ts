@@ -5,9 +5,7 @@ import {
 	Model,
 	DataTypes,
 	type NonAttribute,
-	type HasOneGetAssociationMixin,
 	type HasManyGetAssociationsMixin,
-	type HasOneSetAssociationMixin,
 	type BelongsToGetAssociationMixin
 } from '@sequelize/core';
 import {
@@ -16,6 +14,7 @@ import {
 	BeforeCreate,
 	BeforeUpdate,
 	CreatedAt,
+	Default,
 	HasMany,
 	HasOne,
 	NotNull,
@@ -54,10 +53,12 @@ export class Pouzivatel extends Model<
 	@NotNull
 	declare Heslo: string;
 
-	@HasOne(() => Oddelenie, { foreignKey: 'OddelenieID', inverse: 'pouzivatelia' })
+	@Attribute(DataTypes.INTEGER)
+	declare OddelenieID?: CreationOptional<number | null>;
+
+	/** Defined by {@link Oddelenie.pouzivatel} */
 	declare oddelenie: NonAttribute<Oddelenie>;
-	declare getOddelenie: HasOneGetAssociationMixin<Oddelenie>;
-	declare setOddelenie: HasOneSetAssociationMixin<Oddelenie, Oddelenie['OddelenieID']>;
+	declare getOddelenie: BelongsToGetAssociationMixin<Oddelenie>;
 
 	@HasMany(() => Session, { foreignKey: 'user_id', inverse: 'pouzivatel' })
 	declare sessions?: NonAttribute<Session[]>;
@@ -67,7 +68,7 @@ export class Pouzivatel extends Model<
 	declare objednavky?: NonAttribute<Objednavka[]>;
 	declare getObjednavky: HasManyGetAssociationsMixin<Objednavka>;
 
-	@HasMany(() => Produkt, { foreignKey: "VytvorilPouzivatelID", inverse: 'pouzivatel' })
+	@HasMany(() => Produkt, { foreignKey: 'VytvorilPouzivatelID', inverse: 'pouzivatel' })
 	declare produkty?: NonAttribute<Produkt[]>;
 	declare getProdukty: HasManyGetAssociationsMixin<Produkt>;
 
@@ -116,9 +117,9 @@ export class Oddelenie extends Model<
 	@Attribute(DataTypes.TEXT)
 	declare Popis: CreationOptional<string>;
 
-	/** Defined by {@link Pouzivatel.oddelenie} */
-	declare oddelenie: NonAttribute<Oddelenie>;
-	declare getOddelenie: BelongsToGetAssociationMixin<Oddelenie>;
+	@HasOne(() => Pouzivatel, { foreignKey: "OddelenieID", inverse: "oddelenie" })
+	declare pouzivatel?: NonAttribute<Pouzivatel[]>;
+	declare getPouzivatel: HasManyGetAssociationsMixin<Pouzivatel>;
 
 	@CreatedAt
 	declare created_at: CreationOptional<Date>;
@@ -153,13 +154,22 @@ export class Objednavka extends Model<
 
 	@Attribute(DataTypes.JSON)
 	@NotNull
-	declare Produkt: Array<{ id: number; name: string; quantity: number }>;
+	declare Produkt: Array<{
+		id: number;
+		name: string;
+		quantity: number;
+		oddelenie?: string;
+		vyrobene?: boolean;
+		vyrobeneDatum?: Date;
+	}>;
 
 	@Attribute(DataTypes.DATE)
 	@NotNull
 	declare DatumExpedicie: Date;
 
 	@Attribute(DataTypes.ENUM('prijata', 'vo vyrobe', 'expedovana'))
+	@NotNull
+	@Default("prijata")
 	declare Stav: CreationOptional<'prijata' | 'vo vyrobe' | 'expedovana'>;
 
 	@CreatedAt
@@ -169,20 +179,20 @@ export class Objednavka extends Model<
 	declare updated_at: CreationOptional<Date>;
 
 	// Custom validation to ensure the id within the JSON references a valid Produkt
-    static async validateProdukty(produkty: Array<{ id: number; quantity: number }>) {
-        for (const produkt of produkty) {
-            const exists = await Produkt.findByPk(produkt.id);
-            if (!exists) {
-                throw new Error(`Produkt with id ${produkt.id} does not exist`);
-            }
-        }
-    }
+	static async validateProdukty(produkty: Array<{ id: number; quantity: number }>) {
+		for (const produkt of produkty) {
+			const exists = await Produkt.findByPk(produkt.id);
+			if (!exists) {
+				throw new Error(`Produkt with id ${produkt.id} does not exist`);
+			}
+		}
+	}
 
-    @BeforeCreate
-    @BeforeUpdate
-    static async validateProduktyHook(instance: Objednavka) {
-        await Objednavka.validateProdukty(instance.Produkt);
-    }
+	@BeforeCreate
+	@BeforeUpdate
+	static async validateProduktyHook(instance: Objednavka) {
+		await Objednavka.validateProdukty(instance.Produkt);
+	}
 }
 
 @Table({ tableName: 'Zakaznici' })
@@ -233,15 +243,13 @@ export class Produkt extends Model<InferAttributes<Produkt>, InferCreationAttrib
 	@Attribute(DataTypes.DECIMAL(10, 2))
 	declare Cena: string;
 
-	
-
 	@Attribute(DataTypes.STRING)
 	@NotNull
 	declare KatalogoveCislo: string;
 
 	@Attribute(DataTypes.DECIMAL(7, 1))
-    @NotNull
-    declare Hmotnost: string;
+	@NotNull
+	declare Hmotnost: string;
 
 	/** Defined by {@link Pouzivatel.produkty} */
 	declare pouzivatel: NonAttribute<Pouzivatel>;
@@ -270,7 +278,7 @@ export const sequelize = new Sequelize({
 	define: {
 		createdAt: 'created_at',
 		updatedAt: 'updated_at',
-		underscored: false,
+		underscored: false
 	},
 	models: [Pouzivatel, Session, Oddelenie, Objednavka, Zakaznik, Produkt]
 });

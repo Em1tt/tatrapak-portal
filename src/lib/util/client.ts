@@ -16,6 +16,10 @@ export function isValidEmail(email: string): boolean {
 	return /.+@.+/.test(email);
 }
 
+export function isValidTelephone(telephone: string): boolean {
+	return /^(\+421|00421|09)\d{9}$/.test(telephone);
+}
+
 export const serializeNonPOJOs = (obj: object) => {
 	return JSON.parse(JSON.stringify(obj));
 };
