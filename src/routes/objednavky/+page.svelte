@@ -915,7 +915,7 @@
 							placeholder="0000/0"
 						/>
 					</div>
-					<div class="flex flex-col gap-1 py-1 col-span-12 sm:col-span-4">
+					<div class="flex-col gap-1 py-1 col-span-12 sm:col-span-4 hidden">
 						<Label forInput="priceProduct{productID}">Cena/ks (€) (nepovinné)</Label>
 						<NumberInput
 							step="0.001"
@@ -1199,7 +1199,7 @@
 								placeholder="0000/0"
 							/>
 						</div>
-						<div class="flex flex-col gap-1 py-1 col-span-12">
+						<div class="flex-col gap-1 py-1 col-span-12 hidden">
 							<Label forInput="priceProduct{productID}">Cena/ks (€) (nepovinné)</Label>
 							<NumberInput
 								step="0.001"
