@@ -13,12 +13,16 @@
 	import Logout from '$lib/icons/Logout.svelte';
 	import Anchor from './Anchor.svelte';
 	import { applyAction, enhance } from '$app/forms';
-	import { writable, type Writable } from 'svelte/store';
 	import { invalidateAll } from '$app/navigation';
 	import type { Pouzivatel } from '$lib/server/models';
 	import toast from 'svelte-french-toast';
+	import WrenchScrew from '$lib/icons/WrenchScrew.svelte';
+	import Check from '$lib/icons/Check.svelte';
+	import Cross from '$lib/icons/Cross.svelte';
 
 	let open = $state(false);
+
+	let password = $state("");
 
 	let { user }: { user?: Pouzivatel | null } = $props();
 
@@ -75,6 +79,11 @@
 						</Button>
 					{/snippet}
 					<div class="flex flex-col">
+						<Button type="button" onclick={() => {open = true}} style="opaque" textStyle="default" shrink={false}>
+							<Icon scale="small">
+								<WrenchScrew />
+							</Icon> Zmeniť heslo
+						</Button>
 						<form action="/api/auth/signout" method="post" use:enhance class="w-full flex flex-col">
 							<Button type="submit" style="opaque" textStyle="danger" shrink={false}>
 								<Icon scale="small">
@@ -91,8 +100,7 @@
 	</div>
 	<div class="w-full bg-background-light-1">
 		<div class="flex flex-row items-center justify-start w-full px-2 py-1 mx-auto max-w-7xl gap-4">
-			<Anchor scale="small" href="/">Domov</Anchor>
-			<Anchor scale="small" href="/objednavky">Objednávky</Anchor>
+			<Anchor scale="small" href="/">Objednávky</Anchor>
 			<Anchor scale="small" href="/pouzivatelia">Používatelia</Anchor>
 		</div>
 	</div>
@@ -149,4 +157,119 @@
 			</div>
 		</form>
 	</Dialog>
+{:else}
+<Dialog bind:open>
+	{#snippet header()}
+		Zmeniť heslo
+	{/snippet}
+	<form
+		method="post"
+		action="/api/auth/changePassword"
+		use:enhance={() => {
+			return async ({ result }) => {
+				console.log(result);
+				// `result` is an `ActionResult` object
+				if (result.type === 'failure') {
+					loginError = result.data?.message;
+					if (Array.isArray(result.data?.validate)) validate = result.data?.validate;
+				} else {
+					await invalidateAll();
+					toast.success('Úspešne ste si zmenili heslo.', {
+						duration: 3000,
+						position: 'bottom-right'
+					});
+					open = false;
+					await applyAction(result);
+				}
+			};
+		}}
+	>
+		<div class="px-4 py-2">
+			<div class="flex flex-col gap-1 py-1">
+				<Label forInput="password">Staré heslo</Label>
+				<TextInput type="password" id="password" name="password" placeholder="Heslo" />
+			</div>
+			<div class="flex flex-col gap-1 py-1">
+				<Label forInput="newPassword">Nové heslo</Label>
+				<TextInput bind:value={password} type="password" id="newPassword" name="newPassword" placeholder="Heslo" />
+			</div>
+			<div
+						class="overflow-hidden mt-0.5 w-full duration-300 rounded border-border-base flex flex-col"
+					>
+						{#if /[A-Z]/.test(password)}
+							<p class="flex flex-row flex-nowrap gap-1 text-primary-base py-1">
+								<Icon scale="small">
+									<Check />
+								</Icon>
+								Heslo má veľké písmeno
+							</p>
+						{:else}
+							<p class="flex flex-row flex-nowrap gap-1 text-danger-base py-1">
+								<Icon scale="small">
+									<Cross />
+								</Icon>
+								Heslo má veľké písmeno
+							</p>
+						{/if}
+						{#if /[a-z]/.test(password)}
+							<p class="flex flex-row flex-nowrap gap-1 text-primary-base py-1">
+								<Icon scale="small">
+									<Check />
+								</Icon>
+								Heslo má malé písmeno
+							</p>
+						{:else}
+							<p class="flex flex-row flex-nowrap gap-1 text-danger-base py-1">
+								<Icon scale="small">
+									<Cross />
+								</Icon>
+								Heslo má malé písmeno
+							</p>
+						{/if}
+						{#if /[0-9]/.test(password)}
+							<p class="flex flex-row flex-nowrap gap-1 text-primary-base py-1">
+								<Icon scale="small">
+									<Check />
+								</Icon>
+								Heslo má aspoň jedno číslo
+							</p>
+						{:else}
+							<p class="flex flex-row flex-nowrap gap-1 text-danger-base py-1">
+								<Icon scale="small">
+									<Cross />
+								</Icon>
+								Heslo má aspoň jedno číslo
+							</p>
+						{/if}
+						{#if /.{8,}/.test(password)}
+							<p class="flex flex-row flex-nowrap gap-1 text-primary-base py-1">
+								<Icon scale="small">
+									<Check />
+								</Icon>
+								Heslo má aspoň 8 znakov
+							</p>
+						{:else}
+							<p class="flex flex-row flex-nowrap gap-1 text-danger-base py-1">
+								<Icon scale="small">
+									<Cross />
+								</Icon>
+								Heslo má aspoň 8 znakov
+							</p>
+						{/if}
+					</div>
+		</div>
+		{#if loginError}
+			<div class="px-4 py-2 text-danger-base">{loginError}</div>
+		{/if}
+		<div class="flex justify-between w-full px-4 py-2 border-t border-slate-400/30">
+			<Button onclick={() => (open = false)} type="reset" style="opaque">Zrušiť</Button>
+			<Button type="submit" style="primary">
+				<Icon scale="small">
+					<Login />
+				</Icon>
+				Zmeniť heslo
+			</Button>
+		</div>
+	</form>
+</Dialog>
 {/if}

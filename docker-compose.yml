@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  tatrapak:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tatrapak-image
+    ports:
+      - "8096:3000"
+    restart: always
