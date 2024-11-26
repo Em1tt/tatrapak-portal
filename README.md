@@ -2,7 +2,29 @@
 
 Tento repozitár obsahuje aplikáciu Tatrapak. Postupujte podľa pokynov nižšie na nastavenie a spustenie aplikácie.
 
-## Predpoklady
+## Pre porotu
+
+Rátam s tým, že tento kolos si nechcete sami hostovať, preto som Vám pripravil link, kde to je celé hostnuté. Nájdete ho na https://tatrapak.em1t.xyz/ .
+
+Prihlasovacie údaje:
+### Správca
+admin@tatrapak.sk  
+Admin123
+
+### Administratívny pracovník
+administrativa@tatrapak.sk  
+Administrativa123
+
+### Výroba (oddelenie: Sklad)
+vyroba@tatrapak.sk  
+Vyroba123  
+Poznámka: Ak Administratívny pracovník nastaví na produkt oddelenie iné ako je Sklad, z tohto účtu to neuvidíte, pokiaľ za Správcu nezmeníte oddelenie tomuto účtu v `/pouzivatelia`
+
+### Obchodník
+obchod@tatrapak.sk  
+Obchod123
+
+## Predpoklady na server
 
 - Node.js (verzia 14 alebo vyššie)
 - Docker
@@ -11,7 +33,6 @@ Tento repozitár obsahuje aplikáciu Tatrapak. Postupujte podľa pokynov nižši
 ## Nastavenie
 
 1. Naklonujte repozitár:
-
    ```sh
    git clone https://github.com/Em1tt/tatrapak-portal.git
    cd tatrapak
