@@ -15,10 +15,11 @@ Admin123
 administrativa@tatrapak.sk  
 Administrativa123
 
-### Výroba (oddelenie: Sklad)
+### Výroba (oddelenie: Sypké)
 vyroba@tatrapak.sk  
 Vyroba123  
-Poznámka: Ak Administratívny pracovník nastaví na produkt oddelenie iné ako je Sklad, z tohto účtu to neuvidíte, pokiaľ za Správcu nezmeníte oddelenie tomuto účtu v `/pouzivatelia`
+  
+Poznámka: Ak Administratívny pracovník nastaví na produkt oddelenie iné ako je Sypké, z tohto účtu to neuvidíte, pokiaľ za Správcu nezmeníte oddelenie tomuto účtu v `/pouzivatelia`
 
 ### Obchodník
 obchod@tatrapak.sk  
