@@ -1,4 +1,4 @@
-# Tatrapak
+# Tatrappak
 
 Tento repozitár obsahuje aplikáciu Tatrapak. Postupujte podľa pokynov nižšie na nastavenie a spustenie aplikácie.
 
