@@ -1,41 +1,58 @@
-# sv
+# Tatrapak
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Tento repozitár obsahuje aplikáciu Tatrapak. Postupujte podľa pokynov nižšie na nastavenie a spustenie aplikácie.
 
-## Creating a project
+## Predpoklady
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Node.js (verzia 14 alebo vyššie)
+- Docker
+- Docker Compose
 
-```bash
-# create a new project in the current directory
-npx sv create
+## Nastavenie
 
-# create a new project in my-app
-npx sv create my-app
+1. Naklonujte repozitár:
+
+   ```sh
+   git clone https://github.com/Em1tt/tatrapak-portal.git
+   cd tatrapak
+   ```
+2. Nainštalujte dependencies:
+    ```sh
+    npm install
+    ```
+3. Vytvorte súbor `.env` v koreňovom adresári s nasledujúcim obsahom:
+    ```
+    SQLURI=database_connection_string
+    ```
+## Spustenie aplikácie
+### Použitie Docker Compose
+1. Vytvorte a spustite služby:
+```sh
+sudo docker-compose up --build -d
+```
+2. Na zastavenie služieb:
+```sh
+sudo docker-compose down
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
-
+### Použitie Docker príkazov
+1. Vytvorte Docker image:
+```sh
 sudo docker build -t tatrapak-image .
+```
+2. Spustite Docker kontajner:
+```sh
 sudo docker run -p 8096:3000 -d --restart always tatrapak-image
+```
+## Prístup k aplikácii
+Keď je aplikácia spustená, môžete ju otvoriť vo svojom webovom prehliadači na adrese `http://localhost:8096`.
+
+## Vývoj
+Na spustenie aplikácie v režime vývoja:
+
+1. Spustite aplikáciu:
+```sh
+npm run dev
+```
+
+2. Otvorte svoj prehliadač a prejdite na `http://localhost:5173`.
